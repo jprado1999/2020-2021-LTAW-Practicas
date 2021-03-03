@@ -16,7 +16,7 @@ const pagina_main = `
 </head>
 <body style="background-color: lightblue">
     <h1 style="color: green">EL BAÚL DEL COLECCIONISTA</h1>
-    <img src="/home/pc/LTAW/2020-2021-LTAW-Practicas/P1/img/seccion4k.jpg" alt="Imagen">
+    <img src="img/seccion4k.jpg" alt="Imagen">
 </body>
 </html>
 `
@@ -52,11 +52,11 @@ const server = http.createServer((req, res)=>{
 
     //-- Cualquier recurso que no sea la página principal
     //-- genera un error
-    if (url.pathname != '/') {
+    /*if (url.pathname != '/') {
         code = 404;
         code_msg = "Not Found";
         page = pagina_error;
-    }
+    }*/
 
     //-- Generar la respusta en función de las variables
     //-- code, code_msg y page
