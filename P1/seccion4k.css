@@ -8,20 +8,26 @@ body {
 }
 
 h2 {
-    margin-left: 125px;
+    margin-left: 230px;
+    border: solid;
+    border-color: blue;
+    border-radius: 10px;
+    background-color: aquamarine;
+    max-width: 150px;
 }
 
 h3 {
     border: solid;
     border-color: blue;
-    color: green;
+    border-radius: 10px;
+    background-color: aquamarine;
 }
 
 .peliculas {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 30px;
-    grid-auto-rows: minmax(100px, auto);
+    grid-auto-rows: minmax(100px, auto); 
 }
 
 .one {
