@@ -4,7 +4,6 @@ html {
 
 body {
   background-image: url(img/fondo.jpg);
-  width: 600px;
 }
 
 h2 {
@@ -21,6 +20,7 @@ h3 {
   border-color: blue;
   border-radius: 10px;
   background-color: aquamarine;
+  max-width: 210px;
 }
 
 .secciones {
@@ -39,11 +39,28 @@ h3 {
 .two {
   grid-row: 1;
   grid-column: 2;
-  margin-left: 330px;
+  margin-left: 200px;
 }
 
 .three {
   grid-row: 2;
   grid-column: 1;
   margin-left: 140px;
+}
+
+.hone {
+  margin-left: 50px;
+}
+
+.htwo {
+  margin-left: 0px;
+}
+
+.hthree {
+  margin-left: 50px;
+}
+
+.footer {
+  margin-left: 850px;
+  max-width: 350px;
 }
