@@ -23,6 +23,19 @@ h3 {
     background-color: aquamarine;
 }
 
+.cabecera{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 30px;
+}
+  
+.cesta {
+    grid-row: 1;
+    grid-column: 2;
+    margin-left: 731px;
+    margin-top: 20px;
+}
+
 .peliculas {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

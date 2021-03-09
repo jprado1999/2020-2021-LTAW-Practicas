@@ -23,6 +23,19 @@ h3 {
   max-width: 210px;
 }
 
+.cabecera{
+  display: grid;
+	grid-template-columns: repeat(2, 1fr);
+  grid-gap: 30px;
+}
+
+.cesta {
+  grid-row: 1;
+  grid-column: 2;
+  margin-left: 450px;
+  margin-top: 20px;
+}
+
 .secciones {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
