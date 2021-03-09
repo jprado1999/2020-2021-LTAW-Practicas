@@ -25,14 +25,21 @@ h3 {
 
 .cabecera{
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     grid-gap: 30px;
+}
+  
+.retroceder {
+    grid-row: 1;
+    grid-column: 2;
+    margin-left: 640px;
+    margin-top: 20px;
 }
   
 .cesta {
     grid-row: 1;
-    grid-column: 2;
-    margin-left: 731px;
+    grid-column: 3;
+    margin-left: 11px;
     margin-top: 20px;
 }
 

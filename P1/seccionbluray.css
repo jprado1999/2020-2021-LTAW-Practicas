@@ -29,10 +29,17 @@ h3 {
   grid-gap: 30px;
 }
 
-.cesta {
+.retroceder {
   grid-row: 1;
   grid-column: 2;
-  margin-left: 731px;
+  margin-left: 640px;
+  margin-top: 20px;
+}
+
+.cesta {
+  grid-row: 1;
+  grid-column: 3;
+  margin-left: 11px;
   margin-top: 20px;
 }
 

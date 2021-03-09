@@ -23,16 +23,23 @@ h3 {
   background-color: aquamarine;
 }
 
-.cabecera{
+.cabecera {
   display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: repeat(3, 1fr);
   grid-gap: 30px;
+}
+
+.retroceder {
+  grid-row: 1;
+  grid-column: 2;
+  margin-left: 600px;
+  margin-top: 20px;
 }
 
 .cesta {
   grid-row: 1;
-  grid-column: 2;
-  margin-left: 691px;
+  grid-column: 3;
+  margin-left: 11px;
   margin-top: 20px;
 }
 
