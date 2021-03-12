@@ -55,6 +55,7 @@ const server = http.createServer((req, res) => {
             data = fs.readFileSync(petition);
             res.setHeader('Content-Type', mimetype);
             res.write(data);
+            //-- Para que deje de buscar el recurso y vuelva a esperar peticiones
             return res.end();
         }
 
