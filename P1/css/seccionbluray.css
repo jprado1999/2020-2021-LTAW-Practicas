@@ -3,7 +3,7 @@ html {
 }
 
 body {
-  background-image: url(img/fondo.jpg);
+  background-image: url(../img/fondo.jpg);
   width: 600px;
 }
 
@@ -13,7 +13,7 @@ h2 {
   border-color: blue;
   border-radius: 10px;
   background-color: aquamarine;
-  max-width: 150px;
+  max-width: 115px;
 }
 
 h3 {
@@ -23,16 +23,16 @@ h3 {
   background-color: aquamarine;
 }
 
-.cabecera {
+.cabecera{
   display: grid;
-	grid-template-columns: repeat(3, 1fr);
+	grid-template-columns: repeat(2, 1fr);
   grid-gap: 30px;
 }
 
 .retroceder {
   grid-row: 1;
   grid-column: 2;
-  margin-left: 600px;
+  margin-left: 640px;
   margin-top: 20px;
 }
 
@@ -107,5 +107,17 @@ h3 {
 .ten {
   grid-row: 3;
   grid-column: 2;
+  margin-left: 70px;
+}
+
+.eleven {
+  grid-row: 3;
+  grid-column: 3;
+  margin-left: 210px;
+}
+
+.twelve {
+  grid-row: 3;
+  grid-column: 4;
   margin-left: 70px;
 }

@@ -74,6 +74,11 @@ const server = http.createServer((req, res) => {
             mimetype = 'text/css';
         }
 
+        //-- Ajusto el valor del content type cuando nos piden un archivo js
+        if (resource == "js") {
+            mimetype = 'application/javascript'
+        }
+
         //console.log(mimetype)
 
         //-- Escribo la cabecera del mensaje y muestro la pagina solicitada
