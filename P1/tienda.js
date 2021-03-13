@@ -13,7 +13,6 @@ const server = http.createServer((req, res) => {
     //-- Valores de la respuesta por defecto
     let code = 200;
     let code_msg = "OK";
-    let page = "./tienda.html";
 
     //-- Declaro el valor del content type por defecto
     let mimetype = 'text/html';
@@ -42,7 +41,7 @@ const server = http.createServer((req, res) => {
     //console.log("Tipo de recurso: " + resource);
 
     //-- Generar la respusta en función de las variables
-    //-- code, code_msg y page
+    //-- code, code_msg
     res.statusCode = code;
     res.statusMessage = code_msg;
 
@@ -51,7 +50,7 @@ const server = http.createServer((req, res) => {
         if (err) {
             res.statusCode = 404
             res.statusMessage = "Not Found"
-            petition = "./error.html";
+            petition = "html/error.html";
             data = fs.readFileSync(petition);
             res.setHeader('Content-Type', mimetype);
             res.write(data);
