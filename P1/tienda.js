@@ -8,7 +8,7 @@ const PUERTO = 9000;
 
 //-- Creo el servidor
 const server = http.createServer((req, res) => {
-    console.log("Petición recibida!");
+    console.log("\nPetición recibida!");
 
     //-- Valores de la respuesta por defecto
     let code = 200;
@@ -22,7 +22,7 @@ const server = http.createServer((req, res) => {
 
     //-- Construyo la url que pide el cliente
     const url = new URL(req.url, 'http://' + req.headers['host']);
-    //console.log(url.pathname);
+    console.log("\nSe ha solicitado el recurso: " + url.pathname);
 
     //-- Si se pide la pagina principal
     if (url.pathname == "/") {
@@ -33,12 +33,13 @@ const server = http.createServer((req, res) => {
         petition = url.pathname;
     }
 
-    //-- Me guardo el tipo de recurso pedido
+    //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
     resource = petition.split(".")[1];
+    //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
     petition = "." + petition;
 
-    //console.log("Nombre del fichero: " + petition);
-    //console.log("Tipo de recurso: " + resource);
+    console.log("Nombre del recurso servido: " + petition);
+    console.log("Extension del recurso: " + resource);
 
     //-- Generar la respusta en función de las variables
     //-- code, code_msg
