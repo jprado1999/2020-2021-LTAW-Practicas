@@ -59,30 +59,30 @@ const server = http.createServer((req, res) => {
             return res.end();
         }
 
+        //-- Ajusto el valor del content type cuando nos piden un css
+        if (resource == "css") {
+            mimetype = "text/css";
+        }
+
         //-- El valor de content type varia segun el formato de imagen pedido
-        if (resource == 'jpg' || resource == 'png' || resource == 'jpeg') {
-            mimetype = 'image/' + resource;
+        if (resource == "jpg" || resource == "png" || resource == "jpeg") {
+            mimetype = "image/" + resource;
         }
 
         //-- Si nos piden el iconito, su tipo es texto plano
         if (resource == "ico") {
-            mimetype = 'text/plain';
-        }
-
-        //-- Ajusto el valor del content type cuando nos piden un css
-        if (resource == "css") {
-            mimetype = 'text/css';
+            mimetype = "text/plain";
         }
 
         //-- Ajusto el valor del content type cuando nos piden un archivo js
         if (resource == "js") {
-            mimetype = 'application/javascript'
+            mimetype = "application/javascript";
         }
 
         //console.log(mimetype)
 
         //-- Escribo la cabecera del mensaje y muestro la pagina solicitada
-        res.setHeader('Content-type', mimetype);
+        res.setHeader('Content-Type', mimetype);
         res.write(data);
         res.end();
     });

@@ -10,9 +10,7 @@
  Posteriormente hay que entrar en el navegador web que se prefiera y poner la dirección:
  > 127.0.0.1:9000
 
- La práctica está optimizada en Google Chrome versión escritorio, si se usa desde otro navegador o desde un dispositivo movil puede que algunas fotos o letreros estén descuadrados.
-
- Otra consideración a tener en cuenta es que a veces a mí me pasa que al entrar en la página principal o en alguna de las secciones, éstas se visualizan como si no hubiera cargado a tiempo el fichero css, es decir, con el fondo blanco por defecto y los artículos fuera de sus posiciones. Esto se soluciona recargando la web una o dos veces.
+ La práctica está optimizada en Mozilla Firefox versión escritorio, si se usa desde otro navegador o desde un dispositivo movil puede que algunas fotos o letreros estén descuadrados.
 
  ## Documentación técnica del Servidor web
 
