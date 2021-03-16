@@ -1,5 +1,4 @@
 //-- Importo los módulos necesarios para el servidor
-const url = require('url');
 const http = require('http');
 const fs = require('fs');
 
@@ -78,8 +77,6 @@ const server = http.createServer((req, res) => {
         if (resource == "js") {
             mimetype = "application/javascript";
         }
-
-        //console.log(mimetype)
 
         //-- Escribo la cabecera del mensaje y muestro la pagina solicitada
         res.setHeader('Content-Type', mimetype);
