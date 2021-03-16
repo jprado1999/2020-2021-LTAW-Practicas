@@ -1,0 +1,41 @@
+{
+    "usuarios": [
+        {
+            "nombre": "Jorge",
+            "login": "root" 
+        },
+        {
+            "nombre": "Pepe",
+            "login": "Cliente"
+        }
+    ],
+    "productos": [
+        {
+            "tipo": "BluRay",
+            "stock": 5
+        },
+        {
+            "tipo": "SteelBook",
+            "stock": 3
+        },
+        {
+            "tipo": "4K - BluRay",
+            "stock": 2
+        }
+    ],
+    "pedidos": [
+        {
+            "numero de pedido": 1,
+            "productos": [
+                {
+                    "tipo": "BluRay",
+                    "cantidad": 2
+                },
+                {
+                    "tipo": "SteelBook",
+                    "cantidad": 1
+                }
+            ]
+        }
+    ]
+}
