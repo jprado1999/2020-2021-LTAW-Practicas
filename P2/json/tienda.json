@@ -1,0 +1,56 @@
+{
+    "usuarios": [
+        {
+            "nombre": "Root",
+            "nombre real": "Jorge Prado Fernández",
+            "email": "jprado@elbauldelcoleccionista.es"
+        },
+        {
+            "nombre": "El coleccionista",
+            "login": "Jose García Pedraza",
+            "email": "micoleccionesmasgrandequelatuya@gmail.es"
+        },
+        {
+            "nombre": "La compra-pelis",
+            "login": "María del Cine Antiguo",
+            "email": "arrasatiendas@gmail.es"
+        }
+    ],
+    "productos": [
+        {
+            "nombre": "BluRay",
+            "descripcion": "Caja amaray, calidad Full HD",
+            "precio": "12,99€",
+            "stock": 5
+        },
+        {
+            "nombre": "SteelBook",
+            "descripcion": "Caja metálica, calidad Full HD",
+            "precio": "19,99€",
+            "stock": 3
+        },
+        {
+            "nombre": "4K - BluRay",
+            "descripcion": "Caja amaray negra, calidad UHD 4K",
+            "precio": "24,99€",
+            "stock": 2
+        }
+    ],
+    "pedidos": [
+        {
+            "nombre de usuario": "La compra-pelis",
+            "direccion de envio": "Calle Hortaleza nº 21",
+            "numero de la tarjeta": 1234567891234567,
+            "productos": [
+                {
+                    "nombre": "BluRay",
+                    "cantidad": 1
+                },
+                {
+                    "nombre": "SteelBook",
+                    "cantidad": 1
+                }
+            ]
+        }
+    ]
+}

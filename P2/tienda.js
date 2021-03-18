@@ -28,8 +28,10 @@ const server = http.createServer((req, res) => {
         petition += "/tienda.html";
     } else if (url.pathname == '/favicon.ico') {    //-- Si se pide el icono de la pestaña
         petition += '/img/carrito.jpg';
-    } else {                                        //-- Si se pide cualquier otra cosa
-        petition = url.pathname;
+    } else if (url.pathname == '/productos') {
+        petition += '/json/tienda.json';            //-- Productos de la tienda
+    } else {                                        
+        petition = url.pathname;                    //-- Si se pide cualquier otra cosa
     }
 
     //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
@@ -76,6 +78,11 @@ const server = http.createServer((req, res) => {
         //-- Ajusto el valor del content type cuando nos piden un archivo js
         if (resource == "js") {
             mimetype = "application/javascript";
+        }
+
+        //-- Ajusto el valor del conten type cuando nos piden un json
+        if (resource == "json") {
+            mimetype = "application/json";
         }
 
         //-- Escribo la cabecera del mensaje y muestro la pagina solicitada
