@@ -1,0 +1,17 @@
+html {
+    position: relative;
+}
+
+body {
+    background-image: url(../img/fondo.jpg);
+    width: 600px;
+}
+
+.error {
+    margin-left: 170px;
+}
+
+.foto {
+    margin-top: 50px;
+    margin-left: 85px;
+}
