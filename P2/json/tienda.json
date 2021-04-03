@@ -1,5 +1,5 @@
-{
-    "usuarios": [
+[
+    { "usuarios": [
         {
             "nombre": "Root",
             "nombre real": "Jorge Prado Fernández",
@@ -15,8 +15,8 @@
             "login": "María del Cine Antiguo",
             "email": "arrasatiendas@gmail.es"
         }
-    ],
-    "productos": [
+    ]},
+    {"productos": [
         {
             "nombre": "BluRay",
             "descripcion": "Caja amaray, calidad Full HD",
@@ -35,8 +35,8 @@
             "precio": "24,99€",
             "stock": 2
         }
-    ],
-    "pedidos": [
+    ]},
+    {"pedidos": [
         {
             "nombre de usuario": "La compra-pelis",
             "direccion de envio": "Calle Hortaleza nº 21",
@@ -52,5 +52,5 @@
                 }
             ]
         }
-    ]
-}
+    ]}
+]
