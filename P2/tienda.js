@@ -5,6 +5,12 @@ const fs = require('fs');
 //-- Defino el numero de puerto que utilizo
 const PUERTO = 9000;
 
+//-- Leer el fichero JSON
+const tienda_json = fs.readFileSync('json/tienda.json');
+
+//-- Crear la estructura tienda a partir del contenido del fichero
+const tienda = JSON.parse(tienda_json);
+
 //-- Creo el servidor
 const server = http.createServer((req, res) => {
     console.log("\nPetición recibida!");
@@ -19,6 +25,9 @@ const server = http.createServer((req, res) => {
     //-- Declaro la variable que almacenará los recursos solicitados
     let petition = "";
 
+    //-- Defino la variable que va a obtener el nombre introducido en el formulario
+    let nombre;
+
     //-- Construyo la url que pide el cliente
     const url = new URL(req.url, 'http://' + req.headers['host']);
     console.log("\nSe ha solicitado el recurso: " + url.pathname);
@@ -28,10 +37,21 @@ const server = http.createServer((req, res) => {
         petition += "/tienda.html";
     } else if (url.pathname == '/favicon.ico') {    //-- Si se pide el icono de la pestaña
         petition += '/img/carrito.jpg';
-    } else if (url.pathname == '/productos') {
-        petition += '/json/tienda.json';            //-- Productos de la tienda
+    } else if (url.pathname == '/productos') {      //-- Productos de la tienda
+        petition += '/json/tienda.json';            
     } else {                                        
         petition = url.pathname;                    //-- Si se pide cualquier otra cosa
+        nombre = url.searchParams.get('nombre');
+        console.log("Nombre: " + nombre);
+        if (nombre != null) {
+            if (nombre == tienda[0]["usuarios"][0]["nombre"] || nombre == tienda[0]["usuarios"][1]["nombre"] || nombre == tienda[0]["usuarios"][2]["nombre"]) {
+                console.log("Usuario registrado");
+                //-- Devolver la pagina de bienvenida correspondiente
+            } else {
+                console.log("Usuario desconocido");
+                //-- Devolver la pagina de bienvenida de error
+            }
+        }
     }
 
     //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
