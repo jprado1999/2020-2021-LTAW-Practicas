@@ -8,6 +8,9 @@ const PUERTO = 9000;
 //-- Leer el fichero JSON
 const tienda_json = fs.readFileSync('json/tienda.json');
 
+//-- Nombre del fichero JSON de salida provisional, para no modificar el original
+const FICHERO_JSON_OUT = "json/resultado.json"
+
 //-- Leer el fichero de respuesta al formulario
 const RESPUESTA = fs.readFileSync('html/procesar.html', 'utf-8');
 
@@ -57,6 +60,8 @@ const server = http.createServer((req, res) => {
     } else {                                        
         //-- Si se pide cualquier otra cosa
         nombre = url.searchParams.get('nombre');
+        envio = url.searchParams.get('envio');
+        tarjeta = url.searchParams.get('tarjeta');
         //console.log("Nombre: " + nombre);
         if (nombre != null) {
             let html_extra = "";
@@ -80,6 +85,15 @@ const server = http.createServer((req, res) => {
             res.end();
             return
         } else {
+            if (envio != null && tarjeta != null) {
+                tienda[2]["pedidos"][0]["direccion de envio"] = envio;
+                tienda[2]["pedidos"][0]["numero de la tarjeta"] = tarjeta;
+                
+                //-- Convertir la variable a cadena JSON
+                let myJSON = JSON.stringify(tienda);
+                //-- Guardarla en el fichero destino
+                fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
+            }
             //-- Le doy valor a la peticion cuando el archivo a devolver no es la respuesta de
             //-- un formulario
             petition = url.pathname; 
