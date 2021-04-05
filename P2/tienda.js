@@ -8,6 +8,9 @@ const PUERTO = 9000;
 //-- Leer el fichero JSON
 const tienda_json = fs.readFileSync('json/tienda.json');
 
+//-- Leer el fichero de respuesta al formulario
+const RESPUESTA = fs.readFileSync('html/procesar.html', 'utf-8');
+
 //-- Crear la estructura tienda a partir del contenido del fichero
 const tienda = JSON.parse(tienda_json);
 
@@ -35,32 +38,65 @@ const server = http.createServer((req, res) => {
     //-- Si se pide la pagina principal
     if (url.pathname == "/") {
         petition += "/tienda.html";
+        //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
+        resource = petition.split(".")[1];
+        //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
+        petition = "." + petition;
     } else if (url.pathname == '/favicon.ico') {    //-- Si se pide el icono de la pestaña
         petition += '/img/carrito.jpg';
+        //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
+        resource = petition.split(".")[1];
+        //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
+        petition = "." + petition;
     } else if (url.pathname == '/productos') {      //-- Productos de la tienda
-        petition += '/json/tienda.json';            
+        petition += '/json/tienda.json';
+        //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
+        resource = petition.split(".")[1];
+        //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
+        petition = "." + petition;            
     } else {                                        
-        petition = url.pathname;                    //-- Si se pide cualquier otra cosa
+        //-- Si se pide cualquier otra cosa
         nombre = url.searchParams.get('nombre');
-        console.log("Nombre: " + nombre);
+        //console.log("Nombre: " + nombre);
         if (nombre != null) {
+            let html_extra = "";
             if (nombre == tienda[0]["usuarios"][0]["nombre"] || nombre == tienda[0]["usuarios"][1]["nombre"] || nombre == tienda[0]["usuarios"][2]["nombre"]) {
-                console.log("Usuario registrado");
                 //-- Devolver la pagina de bienvenida correspondiente
+                console.log("Usuario registrado");
+                petition = RESPUESTA.replace("NOMBRE", nombre);
+                html_extra = "<h2>Bienvenid@ a mi tienda!!</h2>";
+                petition = petition.replace("HTML_EXTRA", html_extra);
             } else {
-                console.log("Usuario desconocido");
                 //-- Devolver la pagina de bienvenida de error
+                nombre = "Desconocido";
+                petition = RESPUESTA.replace("NOMBRE", nombre);
+                console.log("Usuario desconocido");
+                html_extra = "<h2>Tu usuario no se encuentra en la base de datos</h2>";
+                petition = petition.replace("HTML_EXTRA", html_extra);
             }
+            resource = "html"
+            res.setHeader('Content-Type', mimetype);
+            res.write(petition);
+            res.end();
+            return
+        } else {
+            //-- Le doy valor a la peticion cuando el archivo a devolver no es la respuesta de
+            //-- un formulario
+            petition = url.pathname; 
+            //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
+            resource = petition.split(".")[1];
+            //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
+            petition = "." + petition;
         }
     }
 
     //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
-    resource = petition.split(".")[1];
+    //resource = petition.split(".")[1];
     //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
-    petition = "." + petition;
+    //petition = "." + petition;
 
     console.log("Nombre del recurso servido: " + petition);
-    console.log("Extension del recurso: " + resource);
+    //console.log("Extension del recurso: " + resource);
 
     //-- Generar la respusta en función de las variables
     //-- code, code_msg
