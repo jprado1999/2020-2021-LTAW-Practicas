@@ -14,6 +14,9 @@ const FICHERO_JSON_OUT = "json/resultado.json"
 //-- Leer el fichero de respuesta al formulario
 const RESPUESTA = fs.readFileSync('html/procesar.html', 'utf-8');
 
+//-- Leer el fichero que indica que un usuario ya está logueado
+const LOGUED = fs.readFileSync('html/usuarioexistente.html', 'utf-8');
+
 //-- Crear la estructura tienda a partir del contenido del fichero
 const tienda = JSON.parse(tienda_json);
 
@@ -47,23 +50,57 @@ const server = http.createServer((req, res) => {
         petition = "." + petition;
     } else if (url.pathname == '/favicon.ico') {    //-- Si se pide el icono de la pestaña
         petition += '/img/carrito.jpg';
-        //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
         resource = petition.split(".")[1];
-        //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
         petition = "." + petition;
     } else if (url.pathname == '/productos') {      //-- Productos de la tienda
         petition += '/json/tienda.json';
-        //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
         resource = petition.split(".")[1];
-        //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
         petition = "." + petition;            
     } else {                                        
         //-- Si se pide cualquier otra cosa
         nombre = url.searchParams.get('nombre');
         envio = url.searchParams.get('envio');
         tarjeta = url.searchParams.get('tarjeta');
+
+        //-- Leer la Cookie recibida en caso de que la haya
+        const cookie = req.headers.cookie;
+
+        //-- Hay cookie
+        if (cookie) {
+            
+            //-- Obtener un array con todos los pares nombre-valor
+            let pares = cookie.split(";");
+            
+            //-- Variable para guardar el usuario
+            let user;
+
+            //-- Recorrer todos los pares nombre-valor
+            pares.forEach((element, index) => {
+
+                //-- Obtener los nombres y valores por separado
+                let [nombre, valor] = element.split('=');
+
+                //-- Leer el usuario
+                //-- Solo si el nombre es 'user'
+                if (nombre.trim() === 'user') {
+                    user = valor;
+                }
+            });
+
+            //--- Si la variable user está asignada
+            if (user) {
+                //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
+                console.log("Usuario existente");
+                petition = LOGUED.replace("USER", user);
+                resource = "html"
+                res.setHeader('Content-Type', mimetype);
+                res.write(petition);
+                res.end();
+                return
+            }
+        }
         //console.log("Nombre: " + nombre);
-        if (nombre != null) {
+        if (nombre != null) {           //-- Estamos saliendo de la pagina de login               
             let html_extra = "";
             if (nombre == tienda[0]["usuarios"][0]["nombre"] || nombre == tienda[0]["usuarios"][1]["nombre"] || nombre == tienda[0]["usuarios"][2]["nombre"]) {
                 //-- Devolver la pagina de bienvenida correspondiente
@@ -71,6 +108,12 @@ const server = http.createServer((req, res) => {
                 petition = RESPUESTA.replace("NOMBRE", nombre);
                 html_extra = "<h2>Bienvenid@ a mi tienda!!</h2>";
                 petition = petition.replace("HTML_EXTRA", html_extra);
+
+                //-- Como el login ha sido correcto, añado la cookie al mensaje de respuesta
+                let sendCookie = "user=" + nombre;
+
+                //console.log(sendCookie);
+                res.setHeader('Set-Cookie', sendCookie);
             } else {
                 //-- Devolver la pagina de bienvenida de error
                 nombre = "Desconocido";
@@ -84,7 +127,7 @@ const server = http.createServer((req, res) => {
             res.write(petition);
             res.end();
             return
-        } else {
+        } else {            //-- Estamos saliendo de la pagina de comprar
             if (envio != null && tarjeta != null) {
                 tienda[2]["pedidos"][0]["direccion de envio"] = envio;
                 tienda[2]["pedidos"][0]["numero de la tarjeta"] = tarjeta;
