@@ -56,12 +56,7 @@ const server = http.createServer((req, res) => {
         petition += '/json/tienda.json';
         resource = petition.split(".")[1];
         petition = "." + petition;            
-    } else {                                        
-        //-- Si se pide cualquier otra cosa
-        nombre = url.searchParams.get('nombre');
-        envio = url.searchParams.get('envio');
-        tarjeta = url.searchParams.get('tarjeta');
-
+    } else if (url.pathname == '/html/formulario.html') {                                        
         //-- Leer la Cookie recibida en caso de que la haya
         const cookie = req.headers.cookie;
 
@@ -99,6 +94,18 @@ const server = http.createServer((req, res) => {
                 return
             }
         }
+        //-- Si no hay cookie devuelvo el formulario, puesto que es la primera vez que se pide
+        petition = url.pathname; 
+        resource = petition.split(".")[1];
+        petition = "." + petition;
+
+    } else {            
+        //-- Si se pide cualquier otra cosa
+        //-- Obtengo el nombre y los datos de la compra de la url en caso de que los haya
+        nombre = url.searchParams.get('nombre');
+        envio = url.searchParams.get('envio');
+        tarjeta = url.searchParams.get('tarjeta');
+
         //console.log("Nombre: " + nombre);
         if (nombre != null) {           //-- Estamos saliendo de la pagina de login               
             let html_extra = "";
@@ -127,24 +134,24 @@ const server = http.createServer((req, res) => {
             res.write(petition);
             res.end();
             return
-        } else {            //-- Estamos saliendo de la pagina de comprar
-            if (envio != null && tarjeta != null) {
-                tienda[2]["pedidos"][0]["direccion de envio"] = envio;
-                tienda[2]["pedidos"][0]["numero de la tarjeta"] = tarjeta;
-                
-                //-- Convertir la variable a cadena JSON
-                let myJSON = JSON.stringify(tienda);
-                //-- Guardarla en el fichero destino
-                fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
-            }
-            //-- Le doy valor a la peticion cuando el archivo a devolver no es la respuesta de
-            //-- un formulario
-            petition = url.pathname; 
-            //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
-            resource = petition.split(".")[1];
-            //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
-            petition = "." + petition;
         }
+
+        if (envio != null && tarjeta != null) { //-- Estamos saliendo de la pagina de comprar
+            tienda[2]["pedidos"][0]["direccion de envio"] = envio;
+            tienda[2]["pedidos"][0]["numero de la tarjeta"] = tarjeta;
+            
+            //-- Convertir la variable a cadena JSON
+            let myJSON = JSON.stringify(tienda);
+            //-- Guardarla en el fichero destino
+            fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
+        }
+        //-- Le doy valor a la peticion cuando el archivo a devolver no es la respuesta de
+        //-- un formulario
+        petition = url.pathname; 
+        //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
+        resource = petition.split(".")[1];
+        //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
+        petition = "." + petition;
     }
 
     //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
