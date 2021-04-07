@@ -9,7 +9,7 @@ const PUERTO = 9000;
 const tienda_json = fs.readFileSync('json/tienda.json');
 
 //-- Nombre del fichero JSON de salida provisional, para no modificar el original
-const FICHERO_JSON_OUT = "json/resultado.json"
+const FICHERO_JSON_OUT = "json/resultado.json";
 
 //-- Leer el fichero de respuesta al formulario
 const RESPUESTA = fs.readFileSync('html/procesar.html', 'utf-8');
@@ -50,34 +50,33 @@ const server = http.createServer((req, res) => {
     //-- Variable para guardar el usuario
     let user;
 
-    //-- Hay cookie
-    if (cookie) {
-        
-        //-- Obtener un array con todos los pares nombre-valor
-        let pares = cookie.split(";");
-
-        //-- Recorrer todos los pares nombre-valor
-        pares.forEach((element, index) => {
-
-            //-- Obtener los nombres y valores por separado
-            let [nombre, valor] = element.split('=');
-
-            //-- Leer el usuario
-            //-- Solo si el nombre es 'user'
-            if (nombre.trim() === 'user') {
-                user = valor;
-            }
-        });
-    }
-
     //-- Si se pide la pagina principal
     if (url.pathname == "/") {
         //-- Compruebo si el usuario ya esta logueado
+        //-- Hay cookie
+        if (cookie) {
+            
+            //-- Obtener un array con todos los pares nombre-valor
+            let pares = cookie.split(";");
+
+            //-- Recorrer todos los pares nombre-valor
+            pares.forEach((element, index) => {
+
+                //-- Obtener los nombres y valores por separado
+                let [nombre, valor] = element.split('=');
+
+                //-- Leer el usuario
+                //-- Solo si el nombre es 'user'
+                if (nombre.trim() === 'user') {
+                    user = valor;
+                }
+            });
+        }
         console.log(user);
         if (user) {
             console.log("Pagina con usuario");
             //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
-            petition = MAIN.replace("HTML_LOGIN", '<p>' + user + '</p>');
+            petition = MAIN.replace("HTML_LOGIN", user);
             resource = "html";
             res.setHeader('Content-Type', mimetype);
             res.write(petition);
@@ -103,6 +102,25 @@ const server = http.createServer((req, res) => {
         petition = "." + petition;            
     } else if (url.pathname == '/html/formulario.html') {                                        
         //--- Si la variable user está asignada, no permito hacer login
+        //-- Hay cookie
+        if (cookie) {
+            
+            //-- Obtener un array con todos los pares nombre-valor
+            let pares = cookie.split(";");
+
+            //-- Recorrer todos los pares nombre-valor
+            pares.forEach((element, index) => {
+
+                //-- Obtener los nombres y valores por separado
+                let [nombre, valor] = element.split('=');
+
+                //-- Leer el usuario
+                //-- Solo si el nombre es 'user'
+                if (nombre.trim() === 'user') {
+                    user = valor;
+                }
+            });
+        }
         console.log(user);
         if (user) {
             //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
