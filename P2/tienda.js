@@ -17,6 +17,9 @@ const RESPUESTA = fs.readFileSync('html/procesar.html', 'utf-8');
 //-- Leer el fichero que indica que un usuario ya está logueado
 const LOGUED = fs.readFileSync('html/usuarioexistente.html', 'utf-8');
 
+//-- Leer el fichero de la página principal
+const MAIN = fs.readFileSync('tienda.html', 'utf-8');
+
 //-- Crear la estructura tienda a partir del contenido del fichero
 const tienda = JSON.parse(tienda_json);
 
@@ -41,13 +44,55 @@ const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://' + req.headers['host']);
     console.log("\nSe ha solicitado el recurso: " + url.pathname);
 
+    //-- Leer la Cookie recibida en caso de que la haya
+    const cookie = req.headers.cookie;
+
+    //-- Variable para guardar el usuario
+    let user;
+
+    //-- Hay cookie
+    if (cookie) {
+        
+        //-- Obtener un array con todos los pares nombre-valor
+        let pares = cookie.split(";");
+
+        //-- Recorrer todos los pares nombre-valor
+        pares.forEach((element, index) => {
+
+            //-- Obtener los nombres y valores por separado
+            let [nombre, valor] = element.split('=');
+
+            //-- Leer el usuario
+            //-- Solo si el nombre es 'user'
+            if (nombre.trim() === 'user') {
+                user = valor;
+            }
+        });
+    }
+
     //-- Si se pide la pagina principal
     if (url.pathname == "/") {
-        petition += "/tienda.html";
-        //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
-        resource = petition.split(".")[1];
-        //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
-        petition = "." + petition;
+        //-- Compruebo si el usuario ya esta logueado
+        console.log(user);
+        if (user) {
+            console.log("Pagina con usuario");
+            //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
+            petition = MAIN.replace("HTML_LOGIN", '<p>' + user + '</p>');
+            resource = "html";
+            res.setHeader('Content-Type', mimetype);
+            res.write(petition);
+            res.end();
+            return
+        } else {
+            console.log("Pagina con login");
+            let html_login = '<a href="html/formulario.html">Login</a>';
+            petition = MAIN.replace("HTML_LOGIN", html_login);
+            resource = "html";
+            res.setHeader('Content-Type', mimetype);
+            res.write(petition);
+            res.end();
+            return
+        }
     } else if (url.pathname == '/favicon.ico') {    //-- Si se pide el icono de la pestaña
         petition += '/img/carrito.jpg';
         resource = petition.split(".")[1];
@@ -57,42 +102,17 @@ const server = http.createServer((req, res) => {
         resource = petition.split(".")[1];
         petition = "." + petition;            
     } else if (url.pathname == '/html/formulario.html') {                                        
-        //-- Leer la Cookie recibida en caso de que la haya
-        const cookie = req.headers.cookie;
-
-        //-- Hay cookie
-        if (cookie) {
-            
-            //-- Obtener un array con todos los pares nombre-valor
-            let pares = cookie.split(";");
-            
-            //-- Variable para guardar el usuario
-            let user;
-
-            //-- Recorrer todos los pares nombre-valor
-            pares.forEach((element, index) => {
-
-                //-- Obtener los nombres y valores por separado
-                let [nombre, valor] = element.split('=');
-
-                //-- Leer el usuario
-                //-- Solo si el nombre es 'user'
-                if (nombre.trim() === 'user') {
-                    user = valor;
-                }
-            });
-
-            //--- Si la variable user está asignada
-            if (user) {
-                //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
-                console.log("Usuario existente");
-                petition = LOGUED.replace("USER", user);
-                resource = "html"
-                res.setHeader('Content-Type', mimetype);
-                res.write(petition);
-                res.end();
-                return
-            }
+        //--- Si la variable user está asignada, no permito hacer login
+        console.log(user);
+        if (user) {
+            //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
+            console.log("Usuario existente");
+            petition = LOGUED.replace("USER", user);
+            resource = "html"
+            res.setHeader('Content-Type', mimetype);
+            res.write(petition);
+            res.end();
+            return
         }
         //-- Si no hay cookie devuelvo el formulario, puesto que es la primera vez que se pide
         petition = url.pathname; 
