@@ -29,18 +29,11 @@ h3 {
   grid-gap: 30px;
 }
 
-.cesta {
+.comprar {
   grid-row: 1;
   grid-column: 2;
   margin-left: 450px;
   margin-top: 20px;
-}
-
-.comprar {
-  grid-row: 1;
-  grid-column: 2;
-  margin-left: 370px;
-  margin-top: 35px;
 }
 
 .login {

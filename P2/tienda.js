@@ -83,14 +83,14 @@ const server = http.createServer((req, res) => {
     //-- null si no se ha reconocido
     let user = get_user(req);
 
-    console.log("User: " + user);
+    //console.log("User: " + user);
 
     //-- Si se pide la pagina principal
     if (url.pathname == "/") {
 
         //--- Si la variable user está asignada
         if (user) {
-            console.log("Pagina con usuario");
+            //console.log("Pagina con usuario");
             //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
             petition = MAIN.replace("HTML_LOGIN", user);
             resource = "html";
@@ -100,7 +100,7 @@ const server = http.createServer((req, res) => {
             return
         } 
         //-- Si no esta asignado user
-        console.log("Pagina con login");
+        //console.log("Pagina con login");
         let html_login = '<a href="html/formulario.html">Login</a>';
         petition = MAIN.replace("HTML_LOGIN", html_login);
         resource = "html";
@@ -121,7 +121,7 @@ const server = http.createServer((req, res) => {
         //--- Si la variable user está asignada, no permito hacer login
         if (user) {
             //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
-            console.log("Usuario existente");
+            //console.log("Usuario existente");
             petition = LOGUED.replace("USER", user);
             resource = "html";
             res.setHeader('Content-Type', mimetype);
@@ -140,13 +140,16 @@ const server = http.createServer((req, res) => {
         nombre = url.searchParams.get('nombre');
         envio = url.searchParams.get('envio');
         tarjeta = url.searchParams.get('tarjeta');
+        cantidad4k = url.searchParams.get('cantidad4k');
+        cantidadBluray = url.searchParams.get('cantidadBluray');
+        cantidadSteel = url.searchParams.get('cantidadSteel');
 
         //console.log("Nombre: " + nombre);
         if (nombre != null) {           //-- Estamos saliendo de la pagina de login               
             let html_extra = "";
             if (nombre == tienda[0]["usuarios"][0]["nombre"] || nombre == tienda[0]["usuarios"][1]["nombre"] || nombre == tienda[0]["usuarios"][2]["nombre"]) {
                 //-- Devolver la pagina de bienvenida correspondiente
-                console.log("Usuario registrado");
+                //console.log("Usuario registrado");
                 petition = RESPUESTA.replace("NOMBRE", nombre);
                 html_extra = "<h2>Bienvenid@ a mi tienda!!</h2>";
                 petition = petition.replace("HTML_EXTRA", html_extra);
@@ -160,7 +163,7 @@ const server = http.createServer((req, res) => {
                 //-- Devolver la pagina de bienvenida de error
                 nombre = "Desconocido";
                 petition = RESPUESTA.replace("NOMBRE", nombre);
-                console.log("Usuario desconocido");
+                //console.log("Usuario desconocido");
                 html_extra = "<h2>Tu usuario no se encuentra en la base de datos</h2>";
                 petition = petition.replace("HTML_EXTRA", html_extra);
             }
@@ -169,6 +172,30 @@ const server = http.createServer((req, res) => {
             res.write(petition);
             res.end();
             return
+        }
+
+        if (cantidad4k != null) {
+            let cartCookie = "cantidad4k=" + cantidad4k + ";path=/";
+            console.log(cartCookie);
+            res.setHeader('Set-Cookie', cartCookie);
+            //tienda[1]["productos"][2]["stock"] -= cantidad4K;
+            //tienda[2]["pedidos"][0]["productos"][0]["cantidad"] += cantidad4k;
+        }
+
+        if (cantidadBluray != null) {
+            let cartCookie = "cantidadBluray=" + cantidadBluray + ";path=/";
+            console.log(cartCookie);
+            res.setHeader('Set-Cookie', cartCookie);
+            //tienda[1]["productos"][0]["stock"] -= cantidadBluray;
+            //tienda[2]["pedidos"][0]["productos"][1]["cantidad"] += cantidadBluray;
+        }
+
+        if (cantidadSteel != null) {
+            let cartCookie = "cantidadSteel=" + cantidadSteel + ";path=/";
+            console.log(cartCookie);
+            res.setHeader('Set-Cookie', cartCookie);
+            //tienda[1]["productos"][1]["stock"] -= cantidadSteel;
+            //tienda[2]["pedidos"][0]["productos"][2]["cantidad"] += cantidadSteel;
         }
 
         if (envio != null && tarjeta != null) { //-- Estamos saliendo de la pagina de comprar
@@ -180,7 +207,6 @@ const server = http.createServer((req, res) => {
             //-- Guardarla en el fichero destino
             fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
         }
-
          
         //-- Le doy valor a la peticion cuando el archivo a devolver no es la respuesta de
         //-- un formulario
