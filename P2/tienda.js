@@ -180,6 +180,8 @@ const server = http.createServer((req, res) => {
             //-- Guardarla en el fichero destino
             fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
         }
+
+         
         //-- Le doy valor a la peticion cuando el archivo a devolver no es la respuesta de
         //-- un formulario
         petition = url.pathname; 
