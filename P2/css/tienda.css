@@ -39,14 +39,14 @@ h3 {
 .comprar {
   grid-row: 1;
   grid-column: 2;
-  margin-left: 380px;
+  margin-left: 370px;
   margin-top: 35px;
 }
 
 .login {
   grid-row: 1;
   grid-column: 2;
-  margin-left: 330px;
+  margin-left: 210px;
   margin-top: 35px;
 }
 

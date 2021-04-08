@@ -23,6 +23,41 @@ const MAIN = fs.readFileSync('tienda.html', 'utf-8');
 //-- Crear la estructura tienda a partir del contenido del fichero
 const tienda = JSON.parse(tienda_json);
 
+//-- Analizar la cookie y devolver el nombre del
+//-- usuario si existe, o null en caso contrario
+function get_user(req) {
+
+  //-- Leer la Cookie recibida
+  const cookie = req.headers.cookie;
+
+  //-- Hay cookie
+  if (cookie) {
+        
+    //-- Obtener un array con todos los pares nombre-valor
+    let pares = cookie.split(";");
+        
+    //-- Variable para guardar el usuario
+    let user;
+
+    //-- Recorrer todos los pares nombre-valor
+    pares.forEach((element, index) => {
+
+      //-- Obtener los nombres y valores por separado
+      let [nombre, valor] = element.split('=');
+
+      //-- Leer el usuario
+      //-- Solo si el nombre es 'user'
+      if (nombre.trim() === 'user') {
+        user = valor;
+      }
+    });
+
+    //-- Si la variable user no está asignada
+    //-- se devuelve null
+    return user || null;
+  }
+}
+
 //-- Creo el servidor
 const server = http.createServer((req, res) => {
     console.log("\nPetición recibida!");
@@ -44,35 +79,16 @@ const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://' + req.headers['host']);
     console.log("\nSe ha solicitado el recurso: " + url.pathname);
 
-    //-- Leer la Cookie recibida en caso de que la haya
-    const cookie = req.headers.cookie;
+    //-- Obtener le usuario que ha accedido
+    //-- null si no se ha reconocido
+    let user = get_user(req);
 
-    //-- Variable para guardar el usuario
-    let user;
+    console.log("User: " + user);
 
     //-- Si se pide la pagina principal
     if (url.pathname == "/") {
-        //-- Compruebo si el usuario ya esta logueado
-        //-- Hay cookie
-        if (cookie) {
-            
-            //-- Obtener un array con todos los pares nombre-valor
-            let pares = cookie.split(";");
 
-            //-- Recorrer todos los pares nombre-valor
-            pares.forEach((element, index) => {
-
-                //-- Obtener los nombres y valores por separado
-                let [nombre, valor] = element.split('=');
-
-                //-- Leer el usuario
-                //-- Solo si el nombre es 'user'
-                if (nombre.trim() === 'user') {
-                    user = valor;
-                }
-            });
-        }
-        console.log(user);
+        //--- Si la variable user está asignada
         if (user) {
             console.log("Pagina con usuario");
             //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
@@ -82,16 +98,16 @@ const server = http.createServer((req, res) => {
             res.write(petition);
             res.end();
             return
-        } else {
-            console.log("Pagina con login");
-            let html_login = '<a href="html/formulario.html">Login</a>';
-            petition = MAIN.replace("HTML_LOGIN", html_login);
-            resource = "html";
-            res.setHeader('Content-Type', mimetype);
-            res.write(petition);
-            res.end();
-            return
-        }
+        } 
+        //-- Si no esta asignado user
+        console.log("Pagina con login");
+        let html_login = '<a href="html/formulario.html">Login</a>';
+        petition = MAIN.replace("HTML_LOGIN", html_login);
+        resource = "html";
+        res.setHeader('Content-Type', mimetype);
+        res.write(petition);
+        res.end();
+        return
     } else if (url.pathname == '/favicon.ico') {    //-- Si se pide el icono de la pestaña
         petition += '/img/carrito.jpg';
         resource = petition.split(".")[1];
@@ -101,32 +117,13 @@ const server = http.createServer((req, res) => {
         resource = petition.split(".")[1];
         petition = "." + petition;            
     } else if (url.pathname == '/html/formulario.html') {                                        
+        
         //--- Si la variable user está asignada, no permito hacer login
-        //-- Hay cookie
-        if (cookie) {
-            
-            //-- Obtener un array con todos los pares nombre-valor
-            let pares = cookie.split(";");
-
-            //-- Recorrer todos los pares nombre-valor
-            pares.forEach((element, index) => {
-
-                //-- Obtener los nombres y valores por separado
-                let [nombre, valor] = element.split('=');
-
-                //-- Leer el usuario
-                //-- Solo si el nombre es 'user'
-                if (nombre.trim() === 'user') {
-                    user = valor;
-                }
-            });
-        }
-        console.log(user);
         if (user) {
             //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
             console.log("Usuario existente");
             petition = LOGUED.replace("USER", user);
-            resource = "html"
+            resource = "html";
             res.setHeader('Content-Type', mimetype);
             res.write(petition);
             res.end();
@@ -155,7 +152,7 @@ const server = http.createServer((req, res) => {
                 petition = petition.replace("HTML_EXTRA", html_extra);
 
                 //-- Como el login ha sido correcto, añado la cookie al mensaje de respuesta
-                let sendCookie = "user=" + nombre;
+                let sendCookie = "user=" + nombre + ";path=/";
 
                 //console.log(sendCookie);
                 res.setHeader('Set-Cookie', sendCookie);
@@ -167,7 +164,7 @@ const server = http.createServer((req, res) => {
                 html_extra = "<h2>Tu usuario no se encuentra en la base de datos</h2>";
                 petition = petition.replace("HTML_EXTRA", html_extra);
             }
-            resource = "html"
+            resource = "html";
             res.setHeader('Content-Type', mimetype);
             res.write(petition);
             res.end();
@@ -192,11 +189,6 @@ const server = http.createServer((req, res) => {
         petition = "." + petition;
     }
 
-    //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
-    //resource = petition.split(".")[1];
-    //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
-    //petition = "." + petition;
-
     console.log("Nombre del recurso servido: " + petition);
     //console.log("Extension del recurso: " + resource);
 
@@ -208,8 +200,8 @@ const server = http.createServer((req, res) => {
     //-- Lectura asincrona de los recursos a mostrar en la pagina
     fs.readFile(petition, (err, data) => {
         if (err) {
-            res.statusCode = 404
-            res.statusMessage = "Not Found"
+            res.statusCode = 404;
+            res.statusMessage = "Not Found";
             petition = "html/error.html";
             data = fs.readFileSync(petition);
             res.setHeader('Content-Type', mimetype);
