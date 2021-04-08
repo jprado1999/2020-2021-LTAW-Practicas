@@ -174,7 +174,7 @@ const server = http.createServer((req, res) => {
             return
         }
 
-        if (cantidad4k != null) {
+        if (cantidad4k != null) {           //-- Coge valor al salir del formulario 4k
             let cartCookie = "cantidad4k=" + cantidad4k + ";path=/";
             console.log(cartCookie);
             res.setHeader('Set-Cookie', cartCookie);
@@ -182,7 +182,7 @@ const server = http.createServer((req, res) => {
             //tienda[2]["pedidos"][0]["productos"][0]["cantidad"] += cantidad4k;
         }
 
-        if (cantidadBluray != null) {
+        if (cantidadBluray != null) {       //-- Coge valor al salir del formulario blu ray
             let cartCookie = "cantidadBluray=" + cantidadBluray + ";path=/";
             console.log(cartCookie);
             res.setHeader('Set-Cookie', cartCookie);
@@ -190,7 +190,7 @@ const server = http.createServer((req, res) => {
             //tienda[2]["pedidos"][0]["productos"][1]["cantidad"] += cantidadBluray;
         }
 
-        if (cantidadSteel != null) {
+        if (cantidadSteel != null) {        //-- Coge valor al salir del formulario Steelbook
             let cartCookie = "cantidadSteel=" + cantidadSteel + ";path=/";
             console.log(cartCookie);
             res.setHeader('Set-Cookie', cartCookie);
@@ -201,6 +201,9 @@ const server = http.createServer((req, res) => {
         if (envio != null && tarjeta != null) { //-- Estamos saliendo de la pagina de comprar
             tienda[2]["pedidos"][0]["direccion de envio"] = envio;
             tienda[2]["pedidos"][0]["numero de la tarjeta"] = tarjeta;
+            tienda[2]["pedidos"][0]["nombre de usuario"] = user;
+            //Para guardar los productos del carrito necesito leer las diferentes cookies
+            //de cantidad y mediante ellas añadir o eliminar los productos pedidos y su cantidad
             
             //-- Convertir la variable a cadena JSON
             let myJSON = JSON.stringify(tienda);
