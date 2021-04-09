@@ -155,7 +155,7 @@ const server = http.createServer((req, res) => {
                 petition = petition.replace("HTML_EXTRA", html_extra);
 
                 //-- Como el login ha sido correcto, añado la cookie al mensaje de respuesta
-                let sendCookie = "user=" + nombre + ";path=/";
+                let sendCookie = "user=" + nombre + "; path=/";
 
                 //console.log(sendCookie);
                 res.setHeader('Set-Cookie', sendCookie);
@@ -174,28 +174,40 @@ const server = http.createServer((req, res) => {
             return
         }
 
-        if (cantidad4k != null) {           //-- Coge valor al salir del formulario 4k
-            let cartCookie = "cantidad4k=" + cantidad4k + ";path=/";
-            console.log(cartCookie);
-            res.setHeader('Set-Cookie', cartCookie);
-            //tienda[1]["productos"][2]["stock"] -= cantidad4K;
-            //tienda[2]["pedidos"][0]["productos"][0]["cantidad"] += cantidad4k;
-        }
+        if (cantidad4k != null || cantidadBluray != null || cantidadSteel != null) {
 
-        if (cantidadBluray != null) {       //-- Coge valor al salir del formulario blu ray
-            let cartCookie = "cantidadBluray=" + cantidadBluray + ";path=/";
-            console.log(cartCookie);
-            res.setHeader('Set-Cookie', cartCookie);
-            //tienda[1]["productos"][0]["stock"] -= cantidadBluray;
-            //tienda[2]["pedidos"][0]["productos"][1]["cantidad"] += cantidadBluray;
-        }
+            //-- Defino el inicio de la cookie que almacenara los productos del carrito
+            let cartCookie = "carrito=";
+            let cantCookie = "";
 
-        if (cantidadSteel != null) {        //-- Coge valor al salir del formulario Steelbook
-            let cartCookie = "cantidadSteel=" + cantidadSteel + ";path=/";
+            if (cantidad4k != null) {           //-- Coge valor al salir del formulario 4k
+                cartCookie += "4k";
+                cantCookie = "cantidad4k=" + cantidad4k + "; path=/";
+                //tienda[1]["productos"][2]["stock"] -= cantidad4K;
+                //tienda[2]["pedidos"][0]["productos"][0]["cantidad"] += cantidad4k;
+            }
+
+            if (cantidadBluray != null) {       //-- Coge valor al salir del formulario blu ray
+                cartCookie += "Bluray";
+                cantCookie = "cantidadBluray=" + cantidadBluray + "; path=/";
+                //tienda[1]["productos"][0]["stock"] -= cantidadBluray;
+                //tienda[2]["pedidos"][0]["productos"][1]["cantidad"] += cantidadBluray;
+            }
+
+            if (cantidadSteel != null) {        //-- Coge valor al salir del formulario Steelbook
+                cartCookie += "Steelbook";
+                cantCookie = "cantidadSteelbook=" + cantidadSteel + "; path=/";
+                //tienda[1]["productos"][1]["stock"] -= cantidadSteel;
+                //tienda[2]["pedidos"][0]["productos"][2]["cantidad"] += cantidadSteel;
+            }
+
+            //-- Envio la cookie del carrito solo si estamos realizando una compra
+            cartCookie += "; path=/";
             console.log(cartCookie);
+            console.log(cantCookie);
+            //-- Solo se envia la primera que escribo
             res.setHeader('Set-Cookie', cartCookie);
-            //tienda[1]["productos"][1]["stock"] -= cantidadSteel;
-            //tienda[2]["pedidos"][0]["productos"][2]["cantidad"] += cantidadSteel;
+            res.setHeader('Set-Cookie', cantCookie);
         }
 
         if (envio != null && tarjeta != null) { //-- Estamos saliendo de la pagina de comprar
