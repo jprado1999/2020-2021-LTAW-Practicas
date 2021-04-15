@@ -58,6 +58,39 @@ function get_user(req) {
   }
 }
 
+function get_cart(req) {
+
+    //-- Leer la Cookie recibida
+    const cookie = req.headers.cookie;
+  
+    //-- Hay cookie
+    if (cookie) {
+          
+      //-- Obtener un array con todos los pares nombre-valor
+      let pares = cookie.split(";");
+          
+      //-- Variable para guardar el usuario
+      let cart;
+  
+      //-- Recorrer todos los pares nombre-valor
+      pares.forEach((element, index) => {
+  
+        //-- Obtener los nombres y valores por separado
+        let [nombre, valor] = element.split('=');
+  
+        //-- Leer el producto
+        //-- Solo si el nombre es 'carrito'
+        if (nombre.trim() === 'carrito') {
+          cart = valor;
+        }
+      });
+  
+      //-- Si la variable user no está asignada
+      //-- se devuelve null
+      return cart || null;
+    }
+}
+
 //-- Creo el servidor
 const server = http.createServer((req, res) => {
     console.log("\nPetición recibida!");
@@ -112,13 +145,16 @@ const server = http.createServer((req, res) => {
         petition += '/img/carrito.jpg';
         resource = petition.split(".")[1];
         petition = "." + petition;
-    } else if (url.pathname == '/productos') {      //-- Productos de la tienda
+    } else if (url.pathname == '/productos') {      //-- Productos de la tienda en formato json
         petition += '/json/tienda.json';
         resource = petition.split(".")[1];
         petition = "." + petition;            
     } else if (url.pathname == '/html/formulario.html') {                                        
         
-        //--- Si la variable user está asignada, no permito hacer login
+        //-- Si la variable user está asignada, no permito hacer login
+        //-- Este if nunca debería alcanzarse puesto que al loguearte
+        //-- desaparece el enlace a la página de login
+        //-- Lo he dejado para que se vea como lo controlaba antes 
         if (user) {
             //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
             //console.log("Usuario existente");
@@ -135,7 +171,7 @@ const server = http.createServer((req, res) => {
         petition = "." + petition;
 
     } else {            
-        //-- Si se pide cualquier otra cosa
+        //-- Si se pide cualquier otro recurso
         //-- Obtengo el nombre y los datos de la compra de la url en caso de que los haya
         nombre = url.searchParams.get('nombre');
         envio = url.searchParams.get('envio');
@@ -174,6 +210,7 @@ const server = http.createServer((req, res) => {
             return
         }
 
+        //-- Si estamos saliendo de cualquiera de las páginas de compra
         if (cantidad4k != null || cantidadBluray != null || cantidadSteel != null) {
 
             //-- Defino el inicio de la cookie que almacenara los productos del carrito
@@ -207,13 +244,27 @@ const server = http.createServer((req, res) => {
             console.log(cantCookie);
             //-- Solo se envia la primera que escribo
             res.setHeader('Set-Cookie', cartCookie);
-            res.setHeader('Set-Cookie', cantCookie);
+            //res.setHeader('Set-Cookie', cantCookie);
         }
 
         if (envio != null && tarjeta != null) { //-- Estamos saliendo de la pagina de comprar
+
+            //-- Añado los datos del pedido según los valores de los campos extrídos anteriormente
             tienda[2]["pedidos"][0]["direccion de envio"] = envio;
             tienda[2]["pedidos"][0]["numero de la tarjeta"] = tarjeta;
             tienda[2]["pedidos"][0]["nombre de usuario"] = user;
+
+            //-- Compruebo si tengo la cookie del carrito para añadir los productos al pedido
+            let cart = get_cart(req);
+            console.log(cart);
+            if (cart == "4k") {
+                tienda[2]["pedidos"][0]["productos"][0]["nombre"] = cart;
+            } else if (cart == "Bluray") {
+                tienda[2]["pedidos"][0]["productos"][1]["nombre"] = cart;
+            } else if (cart == "Steelbook") {
+                tienda[2]["pedidos"][0]["productos"][2]["nombre"] = cart;
+            }
+            
             //Para guardar los productos del carrito necesito leer las diferentes cookies
             //de cantidad y mediante ellas añadir o eliminar los productos pedidos y su cantidad
             

@@ -43,15 +43,15 @@
             "numero de la tarjeta": 1234567891234567,
             "productos": [
                 {
-                    "nombre": "4k",
+                    "nombre": "",
                     "cantidad": 0
                 },
                 {
-                    "nombre": "BluRay",
+                    "nombre": "",
                     "cantidad": 0
                 },
                 {
-                    "nombre": "SteelBook",
+                    "nombre": "",
                     "cantidad": 0
                 }
             ]
