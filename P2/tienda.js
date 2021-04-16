@@ -23,6 +23,9 @@ const MAIN = fs.readFileSync('tienda.html', 'utf-8');
 //-- Leer el fichero de procesar compras
 const PROC = fs.readFileSync('html/procesar-compra.html', 'utf-8');
 
+//-- Leer el formulario de compra final
+const FORM_FINAL = fs.readFileSync('html/formulario-compra.html', 'utf-8');
+
 //-- Crear la estructura tienda a partir del contenido del fichero
 const tienda = JSON.parse(tienda_json);
 
@@ -112,18 +115,15 @@ function get_cantidad(req) {
   
         //-- Obtener los nombres y valores por separado
         let [nombre, valor] = element.split('=');
-        console.log("Nombre: " + nombre + " valor: " + valor);
+        console.log("Nombre: " + nombre + " Valor: " + valor);
         //-- Leer el producto
         //-- Solo si el nombre es una cantidad
         if (nombre.trim() === 'cantidad4k') {
             cantidad = valor;
-            console.log(cantidad);
         } else if (nombre.trim() === 'cantidadBluray') {
             cantidad = valor;
-            console.log(cantidad);
         } else if (nombre.trim() === 'cantidadSteelbook') {
             cantidad = valor;
-            console.log(cantidad);
         }
       });
   
@@ -152,7 +152,7 @@ const server = http.createServer((req, res) => {
 
     //-- Construyo la url que pide el cliente
     const url = new URL(req.url, 'http://' + req.headers['host']);
-    console.log("\nSe ha solicitado el recurso: " + url.pathname);
+    //console.log("\nSe ha solicitado el recurso: " + url.pathname);
 
     //-- Obtener le usuario que ha accedido
     //-- null si no se ha reconocido
@@ -212,6 +212,16 @@ const server = http.createServer((req, res) => {
         resource = petition.split(".")[1];
         petition = "." + petition;
 
+    } else if (url.pathname == '/html/formulario-compra.html'){
+        //-- Cargo la pagina de esta manera para añadir los productos del carrito
+        let cart = get_cart(req);
+        let html_extra = 'Productos en tu carrito: ' + cart;
+        petition = FORM_FINAL.replace("HTML_EXTRA", html_extra);
+        resource = "html";
+        res.setHeader('Content-Type', mimetype);
+        res.write(petition);
+        res.end();
+        return
     } else {            
         //-- Si se pide cualquier otro recurso
         //-- Obtengo el nombre y los datos de la compra de la url en caso de que los haya
@@ -257,19 +267,31 @@ const server = http.createServer((req, res) => {
 
             //-- Defino el inicio de la cookie que almacenara los productos del carrito
             let cartCookie = "carrito=";
+            let cantCookie = "";
 
             if (cantidad4k != null) {           //-- Coge valor al salir del formulario 4k
-                cartCookie += "4k;cantidad4k=" + cantidad4k + ";path=/";
+                cartCookie += "4k; path=/";
+                cantCookie += "cantidad4k=" + cantidad4k + "; path=/";
             } else if (cantidadBluray != null) {       //-- Coge valor al salir del formulario blu ray
-                cartCookie += "Bluray;cantidadBluray=" + cantidadBluray + ";path=/"
+                cartCookie += "Bluray; path=/";
+                cantCookie += "cantidadBluray=" + cantidadBluray + "; path=/";
             } else if (cantidadSteel != null) {        //-- Coge valor al salir del formulario Steelbook
-                cartCookie += "Steelbook;cantidadSteelbook=" + cantidadSteel + ";path=/";
+                cartCookie += "Steelbook; path=/";
+                cantCookie += "cantidadSteelbook=" + cantidadSteel + "; path=/";
             }
 
             //-- Envio la cookie del carrito solo si estamos realizando una compra
             //cartCookie += "; path=/";
             console.log(cartCookie);
-            res.setHeader('Set-Cookie', cartCookie);
+            console.log(cantCookie);
+            res.setHeader('Set-Cookie', [cartCookie, cantCookie]);
+
+            petition = PROC.replace("HTML_EXTRA", "Producto añadido al carrito");
+            resource = "html";
+            res.setHeader('Content-Type', mimetype);
+            res.write(petition);
+            res.end();
+            return
         }
 
         //-- Hay que mandar otra cookie
@@ -287,7 +309,6 @@ const server = http.createServer((req, res) => {
                 let cantidad = get_cantidad(req);
                 console.log("Producto: " + cart + " - cantidad: " + cantidad);
                 if (cart != null & cantidad != null) {
-                    console.log("Producto: " + cart + " - cantidad: " + cantidad);
                     if (cart == "4k") {
                         tienda[2]["pedidos"][0]["productos"][0]["nombre"] = cart;
                         tienda[2]["pedidos"][0]["productos"][0]["cantidad"] = cantidad;
@@ -338,7 +359,7 @@ const server = http.createServer((req, res) => {
         petition = "." + petition;
     }
 
-    console.log("Nombre del recurso servido: " + petition);
+    //console.log("Nombre del recurso servido: " + petition);
     //console.log("Extension del recurso: " + resource);
 
     //-- Generar la respusta en función de las variables
