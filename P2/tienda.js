@@ -5,8 +5,11 @@ const fs = require('fs');
 //-- Defino el numero de puerto que utilizo
 const PUERTO = 9000;
 
-//-- Leer el fichero JSON
+//-- Leer el fichero JSON en el que se almacena la información por defecto de la tienda
 const tienda_json = fs.readFileSync('json/tienda.json');
+
+//-- Crear la estructura tienda a partir del contenido del fichero
+const tienda = JSON.parse(tienda_json);
 
 //-- Nombre del fichero JSON de salida provisional, para no modificar el original
 const FICHERO_JSON_OUT = "json/resultado.json";
@@ -26,10 +29,7 @@ const PROC = fs.readFileSync('html/procesar-compra.html', 'utf-8');
 //-- Leer el formulario de compra final
 const FORM_FINAL = fs.readFileSync('html/formulario-compra.html', 'utf-8');
 
-//-- Crear la estructura tienda a partir del contenido del fichero
-const tienda = JSON.parse(tienda_json);
-
-//-- Analizar la cookie y devolver el nombre del
+//-- Función que analiza las cookies y devuelve el nombre del
 //-- usuario si existe, o null en caso contrario
 function get_user(req) {
 
@@ -64,6 +64,8 @@ function get_user(req) {
   }
 }
 
+//-- Función que analiza las cookies y devuelve el nombre del
+//-- producto que hay en el carrito, o null en caso contrario
 function get_cart(req) {
 
     //-- Leer la Cookie recibida
@@ -96,6 +98,8 @@ function get_cart(req) {
     }
 }
 
+//-- Función que analiza la cookie y devuelve la cantidad de
+//-- productos de cada tipo que se van a comprar, o null en caso contrario
 function get_cantidad(req) {
 
     //-- Leer la Cookie recibida
@@ -154,8 +158,7 @@ const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://' + req.headers['host']);
     //console.log("\nSe ha solicitado el recurso: " + url.pathname);
 
-    //-- Obtener le usuario que ha accedido
-    //-- null si no se ha reconocido
+    //-- Obtener el nombre del usuario que ha accedido
     let user = get_user(req);
 
     //console.log("User: " + user);
@@ -191,8 +194,7 @@ const server = http.createServer((req, res) => {
         petition += '/json/tienda.json';
         resource = petition.split(".")[1];
         petition = "." + petition;            
-    } else if (url.pathname == '/html/formulario.html') {                                        
-        
+    } else if (url.pathname == '/html/formulario.html') {                                          
         //-- Si la variable user está asignada, no permito hacer login
         //-- Este if nunca debería alcanzarse puesto que al loguearte
         //-- desaparece el enlace a la página de login
@@ -215,7 +217,11 @@ const server = http.createServer((req, res) => {
     } else if (url.pathname == '/html/formulario-compra.html'){
         //-- Cargo la pagina de esta manera para añadir los productos del carrito
         let cart = get_cart(req);
-        let html_extra = 'Productos en tu carrito: ' + cart;
+        let html_extra = "No hay productos";
+        //-- Añado los productos en caso de que los haya
+        if (cart) {
+            html_extra = 'Productos en tu carrito: ' + cart;
+        }
         petition = FORM_FINAL.replace("HTML_EXTRA", html_extra);
         resource = "html";
         res.setHeader('Content-Type', mimetype);
@@ -226,11 +232,11 @@ const server = http.createServer((req, res) => {
         //-- Si se pide cualquier otro recurso
         //-- Obtengo el nombre y los datos de la compra de la url en caso de que los haya
         nombre = url.searchParams.get('nombre');
-        envio = url.searchParams.get('envio');
-        tarjeta = url.searchParams.get('tarjeta');
-        cantidad4k = url.searchParams.get('cantidad4k');
-        cantidadBluray = url.searchParams.get('cantidadBluray');
-        cantidadSteel = url.searchParams.get('cantidadSteel');
+        let envio = url.searchParams.get('envio');
+        let tarjeta = url.searchParams.get('tarjeta');
+        let cantidad4k = url.searchParams.get('cantidad4k');
+        let cantidadBluray = url.searchParams.get('cantidadBluray');
+        let cantidadSteel = url.searchParams.get('cantidadSteel');
 
         //console.log("Nombre: " + nombre);
         if (nombre != null) {           //-- Estamos saliendo de la pagina de login               
@@ -272,20 +278,33 @@ const server = http.createServer((req, res) => {
             if (cantidad4k != null) {           //-- Coge valor al salir del formulario 4k
                 cartCookie += "4k; path=/";
                 cantCookie += "cantidad4k=" + cantidad4k + "; path=/";
+                //-- Actualizo el stock de la tienda 
+                tienda[1]["productos"][2]["stock"] -= cantidad4k;
             } else if (cantidadBluray != null) {       //-- Coge valor al salir del formulario blu ray
                 cartCookie += "Bluray; path=/";
                 cantCookie += "cantidadBluray=" + cantidadBluray + "; path=/";
+                //-- Actualizo el stock de la tienda
+                tienda[1]["productos"][0]["stock"] -= cantidadBluray;
             } else if (cantidadSteel != null) {        //-- Coge valor al salir del formulario Steelbook
                 cartCookie += "Steelbook; path=/";
                 cantCookie += "cantidadSteelbook=" + cantidadSteel + "; path=/";
+                //-- Actualizo el stock de la tienda
+                tienda[1]["productos"][1]["stock"] -= cantidadSteel;
             }
 
-            //-- Envio la cookie del carrito solo si estamos realizando una compra
-            //cartCookie += "; path=/";
+            //-- Envio la cookie del carrito y la cantidad 
+            //-- solo si estamos realizando una compra
+            //cartCookie += "; path=/"; Esto es para una cookie de carrito con todos los productos
             console.log(cartCookie);
             console.log(cantCookie);
             res.setHeader('Set-Cookie', [cartCookie, cantCookie]);
 
+            //-- Convertir la variable tienda a cadena JSON para actualizar el stock
+            let myJSON = JSON.stringify(tienda);
+            //-- Guardarla en el fichero destino
+            fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
+
+            //-- Devuelvo la página correspondiente a que hemos añadido cosas al carrito
             petition = PROC.replace("HTML_EXTRA", "Producto añadido al carrito");
             resource = "html";
             res.setHeader('Content-Type', mimetype);
@@ -294,9 +313,7 @@ const server = http.createServer((req, res) => {
             return
         }
 
-        //-- Hay que mandar otra cookie
-
-        if (envio != null && tarjeta != null) { //-- Estamos saliendo de la pagina de comprar
+        if (envio != null && tarjeta != null) { //-- Estamos saliendo de la pagina de pagar
 
             if (user) {     //-- Si hay usuario procesamos la compra, en caso contrario no
                 //-- Añado los datos del pedido según los valores de los campos extrídos anteriormente
@@ -304,26 +321,22 @@ const server = http.createServer((req, res) => {
                 tienda[2]["pedidos"][0]["numero de la tarjeta"] = tarjeta;
                 tienda[2]["pedidos"][0]["nombre de usuario"] = user;
 
-                //-- Compruebo si tengo la cookie del carrito para añadir los productos al pedido
+                //-- Compruebo si tengo la cookie del carrito para añadir los productos al json
                 let cart = get_cart(req);
                 let cantidad = get_cantidad(req);
                 console.log("Producto: " + cart + " - cantidad: " + cantidad);
                 if (cart != null & cantidad != null) {
+                    //-- En esta version solo se puede comprar un producto
+                    //-- El que esté en la cookie del carrito
                     if (cart == "4k") {
                         tienda[2]["pedidos"][0]["productos"][0]["nombre"] = cart;
                         tienda[2]["pedidos"][0]["productos"][0]["cantidad"] = cantidad;
-                        //-- Actualizo el stock de la tienda 
-                        tienda[1]["productos"][2]["stock"] -= cantidad;
                     } else if (cart == "Bluray") {
                         tienda[2]["pedidos"][0]["productos"][1]["nombre"] = cart;
                         tienda[2]["pedidos"][0]["productos"][1]["cantidad"] = cantidad;
-                        //-- Actualizo el stock de la tienda
-                        tienda[1]["productos"][0]["stock"] -= cantidad;
                     } else if (cart == "Steelbook") {
                         tienda[2]["pedidos"][0]["productos"][2]["nombre"] = cart;
                         tienda[2]["pedidos"][0]["productos"][2]["cantidad"] = cantidad;
-                        //-- Actualizo el stock de la tienda
-                        tienda[1]["productos"][1]["stock"] -= cantidad;
                     }
                 } else {
                     console.log("Hay un problema con la cantidad o tipo de productos");
