@@ -20,6 +20,9 @@ const LOGUED = fs.readFileSync('html/usuarioexistente.html', 'utf-8');
 //-- Leer el fichero de la página principal
 const MAIN = fs.readFileSync('tienda.html', 'utf-8');
 
+//-- Leer el fichero de procesar compras
+const PROC = fs.readFileSync('html/procesar-compra.html', 'utf-8');
+
 //-- Crear la estructura tienda a partir del contenido del fichero
 const tienda = JSON.parse(tienda_json);
 
@@ -35,21 +38,21 @@ function get_user(req) {
         
     //-- Obtener un array con todos los pares nombre-valor
     let pares = cookie.split(";");
-        
+            
     //-- Variable para guardar el usuario
     let user;
 
     //-- Recorrer todos los pares nombre-valor
     pares.forEach((element, index) => {
 
-      //-- Obtener los nombres y valores por separado
-      let [nombre, valor] = element.split('=');
+        //-- Obtener los nombres y valores por separado
+        let [nombre, valor] = element.split('=');
 
-      //-- Leer el usuario
-      //-- Solo si el nombre es 'user'
-      if (nombre.trim() === 'user') {
-        user = valor;
-      }
+        //-- Leer el usuario
+        //-- Solo si el nombre es 'user'
+        if (nombre.trim() === 'user') {
+            user = valor;
+        }
     });
 
     //-- Si la variable user no está asignada
@@ -69,7 +72,7 @@ function get_cart(req) {
       //-- Obtener un array con todos los pares nombre-valor
       let pares = cookie.split(";");
           
-      //-- Variable para guardar el usuario
+      //-- Variable para guardar el carrito y la cantidad
       let cart;
   
       //-- Recorrer todos los pares nombre-valor
@@ -81,13 +84,52 @@ function get_cart(req) {
         //-- Leer el producto
         //-- Solo si el nombre es 'carrito'
         if (nombre.trim() === 'carrito') {
-          cart = valor;
+            cart = valor;
+        }
+      });
+      //-- Si la variable cart no está asignada
+      //-- se devuelve null
+      return cart || null;
+    }
+}
+
+function get_cantidad(req) {
+
+    //-- Leer la Cookie recibida
+    const cookie = req.headers.cookie;
+  
+    //-- Hay cookie
+    if (cookie) {
+          
+      //-- Obtener un array con todos los pares nombre-valor
+      let pares = cookie.split(";");
+      console.log(pares);
+      //-- Variable para guardar la cantidad
+      let cantidad;
+  
+      //-- Recorrer todos los pares nombre-valor
+      pares.forEach((element, index) => {
+  
+        //-- Obtener los nombres y valores por separado
+        let [nombre, valor] = element.split('=');
+        console.log("Nombre: " + nombre + " valor: " + valor);
+        //-- Leer el producto
+        //-- Solo si el nombre es una cantidad
+        if (nombre.trim() === 'cantidad4k') {
+            cantidad = valor;
+            console.log(cantidad);
+        } else if (nombre.trim() === 'cantidadBluray') {
+            cantidad = valor;
+            console.log(cantidad);
+        } else if (nombre.trim() === 'cantidadSteelbook') {
+            cantidad = valor;
+            console.log(cantidad);
         }
       });
   
-      //-- Si la variable user no está asignada
+      //-- Si la variable cantidad no está asignada
       //-- se devuelve null
-      return cart || null;
+      return cantidad || null;
     }
 }
 
@@ -215,67 +257,80 @@ const server = http.createServer((req, res) => {
 
             //-- Defino el inicio de la cookie que almacenara los productos del carrito
             let cartCookie = "carrito=";
-            let cantCookie = "";
 
             if (cantidad4k != null) {           //-- Coge valor al salir del formulario 4k
-                cartCookie += "4k";
-                cantCookie = "cantidad4k=" + cantidad4k + "; path=/";
-                //tienda[1]["productos"][2]["stock"] -= cantidad4K;
-                //tienda[2]["pedidos"][0]["productos"][0]["cantidad"] += cantidad4k;
-            }
-
-            if (cantidadBluray != null) {       //-- Coge valor al salir del formulario blu ray
-                cartCookie += "Bluray";
-                cantCookie = "cantidadBluray=" + cantidadBluray + "; path=/";
-                //tienda[1]["productos"][0]["stock"] -= cantidadBluray;
-                //tienda[2]["pedidos"][0]["productos"][1]["cantidad"] += cantidadBluray;
-            }
-
-            if (cantidadSteel != null) {        //-- Coge valor al salir del formulario Steelbook
-                cartCookie += "Steelbook";
-                cantCookie = "cantidadSteelbook=" + cantidadSteel + "; path=/";
-                //tienda[1]["productos"][1]["stock"] -= cantidadSteel;
-                //tienda[2]["pedidos"][0]["productos"][2]["cantidad"] += cantidadSteel;
+                cartCookie += "4k;cantidad4k=" + cantidad4k + ";path=/";
+            } else if (cantidadBluray != null) {       //-- Coge valor al salir del formulario blu ray
+                cartCookie += "Bluray;cantidadBluray=" + cantidadBluray + ";path=/"
+            } else if (cantidadSteel != null) {        //-- Coge valor al salir del formulario Steelbook
+                cartCookie += "Steelbook;cantidadSteelbook=" + cantidadSteel + ";path=/";
             }
 
             //-- Envio la cookie del carrito solo si estamos realizando una compra
-            cartCookie += "; path=/";
+            //cartCookie += "; path=/";
             console.log(cartCookie);
-            console.log(cantCookie);
-            //-- Solo se envia la primera que escribo
             res.setHeader('Set-Cookie', cartCookie);
-            //res.setHeader('Set-Cookie', cantCookie);
         }
+
+        //-- Hay que mandar otra cookie
 
         if (envio != null && tarjeta != null) { //-- Estamos saliendo de la pagina de comprar
 
-            //-- Añado los datos del pedido según los valores de los campos extrídos anteriormente
-            tienda[2]["pedidos"][0]["direccion de envio"] = envio;
-            tienda[2]["pedidos"][0]["numero de la tarjeta"] = tarjeta;
-            tienda[2]["pedidos"][0]["nombre de usuario"] = user;
+            if (user) {     //-- Si hay usuario procesamos la compra, en caso contrario no
+                //-- Añado los datos del pedido según los valores de los campos extrídos anteriormente
+                tienda[2]["pedidos"][0]["direccion de envio"] = envio;
+                tienda[2]["pedidos"][0]["numero de la tarjeta"] = tarjeta;
+                tienda[2]["pedidos"][0]["nombre de usuario"] = user;
 
-            //-- Compruebo si tengo la cookie del carrito para añadir los productos al pedido
-            let cart = get_cart(req);
-            console.log(cart);
-            if (cart == "4k") {
-                tienda[2]["pedidos"][0]["productos"][0]["nombre"] = cart;
-            } else if (cart == "Bluray") {
-                tienda[2]["pedidos"][0]["productos"][1]["nombre"] = cart;
-            } else if (cart == "Steelbook") {
-                tienda[2]["pedidos"][0]["productos"][2]["nombre"] = cart;
+                //-- Compruebo si tengo la cookie del carrito para añadir los productos al pedido
+                let cart = get_cart(req);
+                let cantidad = get_cantidad(req);
+                console.log("Producto: " + cart + " - cantidad: " + cantidad);
+                if (cart != null & cantidad != null) {
+                    console.log("Producto: " + cart + " - cantidad: " + cantidad);
+                    if (cart == "4k") {
+                        tienda[2]["pedidos"][0]["productos"][0]["nombre"] = cart;
+                        tienda[2]["pedidos"][0]["productos"][0]["cantidad"] = cantidad;
+                        //-- Actualizo el stock de la tienda 
+                        tienda[1]["productos"][2]["stock"] -= cantidad;
+                    } else if (cart == "Bluray") {
+                        tienda[2]["pedidos"][0]["productos"][1]["nombre"] = cart;
+                        tienda[2]["pedidos"][0]["productos"][1]["cantidad"] = cantidad;
+                        //-- Actualizo el stock de la tienda
+                        tienda[1]["productos"][0]["stock"] -= cantidad;
+                    } else if (cart == "Steelbook") {
+                        tienda[2]["pedidos"][0]["productos"][2]["nombre"] = cart;
+                        tienda[2]["pedidos"][0]["productos"][2]["cantidad"] = cantidad;
+                        //-- Actualizo el stock de la tienda
+                        tienda[1]["productos"][1]["stock"] -= cantidad;
+                    }
+                } else {
+                    console.log("Hay un problema con la cantidad o tipo de productos");
+                }
+
+                //-- Convertir la variable a cadena JSON
+                let myJSON = JSON.stringify(tienda);
+                //-- Guardarla en el fichero destino
+                fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
+                //-- Como había usuario devuelvo la página de compra exitosa
+                petition = PROC.replace("HTML_EXTRA", "¡Compra realizada!");
+                resource = "html";
+                res.setHeader('Content-Type', mimetype);
+                res.write(petition);
+                res.end();
+                return
+            } else {
+                //-- Como no había usuario devuelvo la página de compra fallida
+                petition = PROC.replace("HTML_EXTRA", "No se ha podido realizar la compra, usuario no registrado");
+                resource = "html";
+                res.setHeader('Content-Type', mimetype);
+                res.write(petition);
+                res.end();
+                return
             }
-            
-            //Para guardar los productos del carrito necesito leer las diferentes cookies
-            //de cantidad y mediante ellas añadir o eliminar los productos pedidos y su cantidad
-            
-            //-- Convertir la variable a cadena JSON
-            let myJSON = JSON.stringify(tienda);
-            //-- Guardarla en el fichero destino
-            fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
         }
          
-        //-- Le doy valor a la peticion cuando el archivo a devolver no es la respuesta de
-        //-- un formulario
+        //-- Le doy valor a la peticion para devolver la pagina pedida sea cual sea
         petition = url.pathname; 
         //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
         resource = petition.split(".")[1];
