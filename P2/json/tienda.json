@@ -19,19 +19,19 @@
     {"productos": [
         {
             "nombre": "BluRay",
-            "descripcion": "Caja amaray, calidad Full HD",
+            "descripcion": "Película a elegir entre todos los episodios de la saga Star Wars",
             "precio": "12,99€",
             "stock": 10
         },
         {
             "nombre": "SteelBook",
-            "descripcion": "Caja metálica, calidad Full HD",
+            "descripcion": "Película a elegir: Indiana Jones, Tenet, Joker, IT, Los Vengadores y El Prestigio",
             "precio": "19,99€",
             "stock": 10
         },
         {
             "nombre": "4K - BluRay",
-            "descripcion": "Caja amaray negra, calidad UHD 4K",
+            "descripcion": "Película a elegir: Batman, 1917, Harry Potter, Origen, Spiderman y Resident Evil",
             "precio": "24,99€",
             "stock": 10
         }

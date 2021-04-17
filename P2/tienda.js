@@ -29,6 +29,11 @@ const PROC = fs.readFileSync('html/procesar-compra.html', 'utf-8');
 //-- Leer el formulario de compra final
 const FORM_FINAL = fs.readFileSync('html/formulario-compra.html', 'utf-8');
 
+//-- Leer cada una de las secciones para hacer las páginas dinámicas
+const seccion4K = fs.readFileSync('html/seccion4k.html', 'utf-8');
+const seccionBR = fs.readFileSync('html/seccionbluray.html', 'utf-8');
+const seccionST = fs.readFileSync('html/seccionsteelbook.html', 'utf-8');
+
 //-- Función que analiza las cookies y devuelve el nombre del
 //-- usuario si existe, o null en caso contrario
 function get_user(req) {
@@ -223,6 +228,36 @@ const server = http.createServer((req, res) => {
             html_extra = 'Productos en tu carrito: ' + cart;
         }
         petition = FORM_FINAL.replace("HTML_EXTRA", html_extra);
+        resource = "html";
+        res.setHeader('Content-Type', mimetype);
+        res.write(petition);
+        res.end();
+        return
+    } else if (url.pathname == '/html/seccion4k.html'){
+        let descripcion = tienda[1]["productos"][2]["descripcion"];
+        let precio = "Precio: " + tienda[1]["productos"][2]["precio"];
+        petition = seccion4K.replace("HTML_EXTRA", descripcion);
+        petition = petition.replace("PRECIO", precio);
+        resource = "html";
+        res.setHeader('Content-Type', mimetype);
+        res.write(petition);
+        res.end();
+        return
+    } else if (url.pathname == '/html/seccionbluray.html'){
+        let descripcion = tienda[1]["productos"][0]["descripcion"];
+        let precio = "Precio: " + tienda[1]["productos"][0]["precio"];
+        petition = seccionBR.replace("HTML_EXTRA", descripcion);
+        petition = petition.replace("PRECIO", precio);
+        resource = "html";
+        res.setHeader('Content-Type', mimetype);
+        res.write(petition);
+        res.end();
+        return
+    } else if (url.pathname == '/html/seccionsteelbook.html'){
+        let descripcion = tienda[1]["productos"][1]["descripcion"];
+        let precio = "Precio: " + tienda[1]["productos"][1]["precio"];
+        petition = seccionST.replace("HTML_EXTRA", descripcion);
+        petition = petition.replace("PRECIO", precio);
         resource = "html";
         res.setHeader('Content-Type', mimetype);
         res.write(petition);
