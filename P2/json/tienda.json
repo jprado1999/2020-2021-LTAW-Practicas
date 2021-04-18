@@ -31,7 +31,7 @@
         },
         {
             "nombre": "4K - BluRay",
-            "descripcion": "Película a elegir: Batman, 1917, Harry Potter, Origen, Spiderman y Resident Evil",
+            "descripcion": "Película a elegir: Batman, 1917, Harry Potter, Kong, Spiderman y Resident Evil",
             "precio": "24,99€",
             "stock": 10
         }
@@ -56,5 +56,13 @@
                 }
             ]
         }
+    ]},
+    {"lista": [
+        "Pelicula 4k", "Pelicula BluRay", "Pelicula Steelbook", "La Amenaza Fantasma",
+        "El Ataque de los Clones", "La Venganza de los Sith", "Una Nueva Esperanza",
+        "El Imperio Contraataca", "El Retorno del Jedi", "El Despertar de la fuerza",
+        "Los Últimos Jedi", "El Ascenso de Skywalker", "Han Solo", "Rogue One", "The Clone Wars",
+        "Indiana Jones", "Tenet", "Joker", "IT", "Los Vengadores", "El Prestigio", "1917", 
+        "Batman", "Harry Potter", "Kong", "Spiderman", "Resident Evil"
     ]}
 ]

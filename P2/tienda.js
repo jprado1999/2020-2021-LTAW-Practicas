@@ -11,6 +11,13 @@ const tienda_json = fs.readFileSync('json/tienda.json');
 //-- Crear la estructura tienda a partir del contenido del fichero
 const tienda = JSON.parse(tienda_json);
 
+//-- Obtengo el array de productos de mi tienda
+let lista = tienda[3]["lista"];
+//console.log(lista);
+//-- Convertir la variable a cadena JSON
+lista = JSON.stringify(lista);
+const productos = JSON.parse(lista);
+
 //-- Nombre del fichero JSON de salida provisional, para no modificar el original
 const FICHERO_JSON_OUT = "json/resultado.json";
 
@@ -199,6 +206,38 @@ const server = http.createServer((req, res) => {
         petition += '/json/tienda.json';
         resource = petition.split(".")[1];
         petition = "." + petition;            
+    } else if (url.pathname == '/buscar') {
+        console.log("Peticion de Productos!")
+        mimetype = "application/json";
+
+        //-- Leer los parámetros
+        let param1 = url.searchParams.get('param1');
+
+        param1 = param1.toUpperCase();
+
+        console.log("  Parametro: " +  param1);
+
+        let result = [];
+
+        for (let prod of productos) {
+
+            //-- Pasar a mayúsculas
+            prodU = prod.toUpperCase();
+
+            //-- Si el producto comienza por lo indicado en el parametro
+            //-- meter este producto en el array de resultados
+            if (prodU.startsWith(param1)) {
+                result.push(prod);
+            }
+            
+        }
+        console.log(result);
+        petition = JSON.stringify(result);
+        res.setHeader('Content-Type', mimetype);
+        res.write(petition);
+        res.end();
+        return
+
     } else if (url.pathname == '/html/formulario.html') {                                          
         //-- Si la variable user está asignada, no permito hacer login
         //-- Este if nunca debería alcanzarse puesto que al loguearte
