@@ -219,6 +219,19 @@ const server = http.createServer((req, res) => {
 
         let result = [];
 
+        //-- Voy a definir 3 arrays en los que incluyo las peliculas
+        //-- que hay en cada una de mis paginas web. Así podré elegir
+        //-- el hiperenlace adecuado que envío junto con el nombre del producto
+        let peli4k = ["Pelicula 4k", "1917", "Batman", "Harry Potter", "Kong", "Spiderman", "Resident Evil"];
+
+        let peliblu = [ "Pelicula BluRay", "La Amenaza Fantasma",
+        "El Ataque de los Clones", "La Venganza de los Sith", "Una Nueva Esperanza",
+        "El Imperio Contraataca", "El Retorno del Jedi", "El Despertar de la fuerza",
+        "Los Últimos Jedi", "El Ascenso de Skywalker", "Han Solo", "Rogue One", "The Clone Wars"];
+
+        let pelisteel = [ "Pelicula Steelbook", "Indiana Jones", "Tenet",
+         "Joker", "IT", "Los Vengadores", "El Prestigio"];
+
         for (let prod of productos) {
 
             //-- Pasar a mayúsculas
@@ -227,6 +240,17 @@ const server = http.createServer((req, res) => {
             //-- Si el producto comienza por lo indicado en el parametro
             //-- meter este producto en el array de resultados
             if (prodU.startsWith(param1)) {
+
+                //-- Ahora compruebo en qué array están los productos que coinciden
+                //-- y mando su enlace correspondiente para que lo lea el cliente
+                if (peli4k.includes(prod)) {
+                    prod = "<a href='html/seccion4k.html'>" + prod + "</a>";
+                } else if (peliblu.includes(prod)) {
+                    prod = "<a href='html/seccionbluray.html'>" + prod + "</a>";
+                } else if (pelisteel.includes(prod)) {
+                    prod = "<a href='html/seccionsteelbook.html'>" + prod + "</a>";
+                }
+                //-- Envio toda la informacion
                 result.push(prod);
             }
             
