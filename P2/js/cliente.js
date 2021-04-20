@@ -70,7 +70,7 @@ caja.oninput = () => {
     if (caja.value.length >= 3) {   //-- poner un 3
 
       //-- Configurar la petición
-      m.open("GET","/buscar?param1=" + caja.value, true);
+      m.open("GET","/resultados?param1=" + caja.value, true);
 
       //-- Enviar la petición!
       m.send();

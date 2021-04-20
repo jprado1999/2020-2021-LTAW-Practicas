@@ -44,19 +44,20 @@
             </div>
 
             <div class="four">
-                <h3>Búsquedas</h3>
-                <p>Introduce producto a buscar</p>
-                <input type="text" id="caja" placeholder="Buscar..." list="productos" autocomplete="off">
-                <datalist id="productos">
-                    <option id="display1"></option>
-                    <option id="display2"></option>
-                    <option id="display3"></option>
-                    <option id="display4"></option>
-                    <option id="display5"></option>
-                    <option id="display6"></option>
-                </datalist>
-                <p id="master"></p>
-                
+                <form action="/buscar" method="post">
+                    <h3>Búsquedas</h3>
+                    <p>Introduce producto a buscar</p>
+                    <input type="text" id="caja" placeholder="Buscar..." list="productos" autocomplete="off"><input type="submit" value="Buscar" class="button"/>
+                    <datalist id="productos">
+                        <option id="display1"></option>
+                        <option id="display2"></option>
+                        <option id="display3"></option>
+                        <option id="display4"></option>
+                        <option id="display5"></option>
+                        <option id="display6"></option>
+                    </datalist>
+                    <p id="master"></p>
+                </form>
             </div>
             
         </div>

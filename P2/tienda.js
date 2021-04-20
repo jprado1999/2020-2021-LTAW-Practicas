@@ -222,7 +222,7 @@ const server = http.createServer((req, res) => {
         petition += '/json/tienda.json';
         resource = petition.split(".")[1];
         petition = "." + petition;            
-    } else if (url.pathname == '/buscar') {
+    } else if (url.pathname == '/resultados') {
         console.log("Peticion de Productos!")
         mimetype = "application/json";
 
@@ -256,7 +256,7 @@ const server = http.createServer((req, res) => {
                 //-- Envio toda la informacion
                 result.push(prod);
                 resultadoB = prod;
-                console.log(resultadoB)
+                console.log(resultadoB);
             }
             
         }
@@ -267,6 +267,33 @@ const server = http.createServer((req, res) => {
         res.end();
         return
 
+    } else if (url.pathname == '/buscar' || url.pathname == '/html/seccion4k.html' ||
+    url.pathname == '/html/seccionbluray.html' || url.pathname == '/html/seccionsteelbook.html') {
+    
+        if (peli4k.includes(resultadoB) || url.pathname == '/html/seccion4k.html') {
+            let descripcion = tienda[1]["productos"][2]["descripcion"];
+            let precio = "Precio: " + tienda[1]["productos"][2]["precio"];
+            petition = seccion4K.replace("HTML_EXTRA", descripcion);
+            petition = petition.replace("PRECIO", precio);
+        } else if (peliblu.includes(resultadoB) || url.pathname == '/html/seccionbluray.html') {
+            let descripcion = tienda[1]["productos"][0]["descripcion"];
+            let precio = "Precio: " + tienda[1]["productos"][0]["precio"];
+            petition = seccionBR.replace("HTML_EXTRA", descripcion);
+            petition = petition.replace("PRECIO", precio);
+        } else if (pelisteel.includes(resultadoB) || url.pathname == '/html/seccionsteelbook.html') {
+            let descripcion = tienda[1]["productos"][1]["descripcion"];
+            let precio = "Precio: " + tienda[1]["productos"][1]["precio"];
+            petition = seccionST.replace("HTML_EXTRA", descripcion);
+            petition = petition.replace("PRECIO", precio);
+        } else {
+            petition = fs.readFileSync('html/error.html', 'utf-8');
+        }
+        resultadoB = "";
+        resource = "html";
+        res.setHeader('Content-Type', mimetype);
+        res.write(petition);
+        res.end();
+        return
     } else if (url.pathname == '/html/formulario.html') {                                          
         //-- Si la variable user está asignada, no permito hacer login
         //-- Este if nunca debería alcanzarse puesto que al loguearte
