@@ -18,6 +18,9 @@ let lista = tienda[3]["lista"];
 lista = JSON.stringify(lista);
 const productos = JSON.parse(lista);
 
+//-- Defino una variable para almacenar el resultado de la busqueda
+let resultadoB = "";
+
 //-- Voy a definir 3 arrays en los que incluyo las peliculas
 //-- que hay en cada una de mis paginas web. Así podré elegir
 //-- el hiperenlace adecuado que envío junto con el nombre del producto
@@ -243,15 +246,17 @@ const server = http.createServer((req, res) => {
 
                 //-- Ahora compruebo en qué array están los productos que coinciden
                 //-- y mando su enlace correspondiente para que lo lea el cliente
-                if (peli4k.includes(prod)) {
+                /*if (peli4k.includes(prod)) {
                     prod = "<p><a href='html/seccion4k.html'>" + prod + "</a></p>";
                 } else if (peliblu.includes(prod)) {
                     prod = "<p><a href='html/seccionbluray.html'>" + prod + "</a></p>";
                 } else if (pelisteel.includes(prod)) {
                     prod = "<p><a href='html/seccionsteelbook.html'>" + prod + "</a></p>";
-                }
+                }*/
                 //-- Envio toda la informacion
                 result.push(prod);
+                resultadoB = prod;
+                console.log(resultadoB)
             }
             
         }
