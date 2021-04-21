@@ -13,8 +13,7 @@ const tienda = JSON.parse(tienda_json);
 
 //-- Obtengo el array de productos de mi tienda
 let lista = tienda[3]["lista"];
-//console.log(lista);
-//-- Convertir la variable a cadena JSON
+//-- Convertir la variable devuelta a un cadena JSON
 lista = JSON.stringify(lista);
 const productos = JSON.parse(lista);
 
@@ -34,14 +33,11 @@ let peliblu = [ "Pelicula BluRay", "La Amenaza Fantasma",
 let pelisteel = [ "Pelicula Steelbook", "Indiana Jones", "Tenet",
 "Joker", "IT", "Los Vengadores", "El Prestigio"];
 
-//-- Nombre del fichero JSON de salida provisional, para no modificar el original
+//-- Nombre del fichero JSON de salida, para no modificar el original
 const FICHERO_JSON_OUT = "json/resultado.json";
 
 //-- Leer el fichero de respuesta al formulario
 const RESPUESTA = fs.readFileSync('html/procesar.html', 'utf-8');
-
-//-- Leer el fichero que indica que un usuario ya está logueado
-const LOGUED = fs.readFileSync('html/usuarioexistente.html', 'utf-8');
 
 //-- Leer el fichero de la página principal
 const MAIN = fs.readFileSync('tienda.html', 'utf-8');
@@ -189,26 +185,19 @@ const server = http.createServer((req, res) => {
     //-- Obtener el nombre del usuario que ha accedido
     let user = get_user(req);
 
-    //console.log("User: " + user);
-
     //-- Si se pide la pagina principal
     if (url.pathname == "/") {
 
-        //--- Si la variable user está asignada
         if (user) {
-            //console.log("Pagina con usuario");
+            //--- Si la variable user está asignada
             //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
             petition = MAIN.replace("HTML_LOGIN", user);
-            resource = "html";
-            res.setHeader('Content-Type', mimetype);
-            res.write(petition);
-            res.end();
-            return
-        } 
-        //-- Si no esta asignado user
-        //console.log("Pagina con login");
-        let html_login = '<a href="html/formulario.html">Login</a>';
-        petition = MAIN.replace("HTML_LOGIN", html_login);
+        } else {
+            //-- Si no esta asignado user, devuelvo el formulario de registro
+            let html_login = '<a href="html/formulario.html">Login</a>';
+            petition = MAIN.replace("HTML_LOGIN", html_login);
+        }
+
         resource = "html";
         res.setHeader('Content-Type', mimetype);
         res.write(petition);
@@ -222,7 +211,7 @@ const server = http.createServer((req, res) => {
         petition += '/json/tienda.json';
         resource = petition.split(".")[1];
         petition = "." + petition;            
-    } else if (url.pathname == '/resultados') {
+    } else if (url.pathname == '/resultados') {     //-- Peticion AJAX
         console.log("Peticion de Productos!")
         mimetype = "application/json";
 
@@ -243,23 +232,15 @@ const server = http.createServer((req, res) => {
             //-- Si el producto comienza por lo indicado en el parametro
             //-- meter este producto en el array de resultados
             if (prodU.startsWith(param1)) {
-
-                //-- Ahora compruebo en qué array están los productos que coinciden
-                //-- y mando su enlace correspondiente para que lo lea el cliente
-                /*if (peli4k.includes(prod)) {
-                    prod = "<p><a href='html/seccion4k.html'>" + prod + "</a></p>";
-                } else if (peliblu.includes(prod)) {
-                    prod = "<p><a href='html/seccionbluray.html'>" + prod + "</a></p>";
-                } else if (pelisteel.includes(prod)) {
-                    prod = "<p><a href='html/seccionsteelbook.html'>" + prod + "</a></p>";
-                }*/
-                //-- Envio toda la informacion
                 result.push(prod);
+                //-- Me guardo el resultado de la busqueda, que será el que decida
+                //-- la pagina que pido al apretar el botón 'Buscar'
                 resultadoB = prod;
-                console.log(resultadoB);
             }
             
         }
+        //-- Enviar la peticion AJAX
+        console.log("  Resultados:")
         console.log(result);
         petition = JSON.stringify(result);
         res.setHeader('Content-Type', mimetype);
@@ -269,8 +250,11 @@ const server = http.createServer((req, res) => {
 
     } else if (url.pathname == '/buscar' || url.pathname == '/html/seccion4k.html' ||
     url.pathname == '/html/seccionbluray.html' || url.pathname == '/html/seccionsteelbook.html') {
-    
+        //-- Para cargar las páginas dinámicas de los productos, tengo que hacerlo tanto
+        //-- si me las piden desde la pagina de inicio, como si me las piden desde el buscador
         if (peli4k.includes(resultadoB) || url.pathname == '/html/seccion4k.html') {
+            //-- Si buscan una peli de esta seccion o se pide la seccion entera
+            //-- tengo que definir los elementos dinamicos para cada caso
             let descripcion = tienda[1]["productos"][2]["descripcion"];
             let precio = "Precio: " + tienda[1]["productos"][2]["precio"];
             petition = seccion4K.replace("HTML_EXTRA", descripcion);
@@ -288,71 +272,25 @@ const server = http.createServer((req, res) => {
         } else {
             petition = fs.readFileSync('html/error.html', 'utf-8');
         }
+        //-- Finalmente envio la peticion y vacío el resultado de la búsqueda
         resultadoB = "";
         resource = "html";
         res.setHeader('Content-Type', mimetype);
         res.write(petition);
         res.end();
         return
-    } else if (url.pathname == '/html/formulario.html') {                                          
-        //-- Si la variable user está asignada, no permito hacer login
-        //-- Este if nunca debería alcanzarse puesto que al loguearte
-        //-- desaparece el enlace a la página de login
-        //-- Lo he dejado para que se vea como lo controlaba antes 
-        if (user) {
-            //-- El usuario ya ha hecho login anteriormente, devuelvo la pagina correspondiente
-            //console.log("Usuario existente");
-            petition = LOGUED.replace("USER", user);
-            resource = "html";
-            res.setHeader('Content-Type', mimetype);
-            res.write(petition);
-            res.end();
-            return
-        }
-        //-- Si no hay cookie devuelvo el formulario, puesto que es la primera vez que se pide
-        petition = url.pathname; 
-        resource = petition.split(".")[1];
-        petition = "." + petition;
-
-    } else if (url.pathname == '/html/formulario-compra.html'){
-        //-- Cargo la pagina de esta manera para añadir los productos del carrito
-        let cart = get_cart(req);
+    } else if (url.pathname == '/html/formulario-compra.html'){ //-- Formulario de pago
+        //-- Defino el mensaje por defecto y compruebo si hay productos en el carrito
         let html_extra = "No hay productos";
-        //-- Añado los productos en caso de que los haya
+        let cart = get_cart(req);
+        let cantidadC = get_cantidad(req);
+        //-- Cambio el mensaje en caso de que haya productos
         if (cart) {
-            html_extra = 'Productos en tu carrito: ' + cart;
+            html_extra = 'Productos en tu carrito: ' + cart + " - Cantidad: " + cantidadC;
+            console.log(html_extra)
         }
+        //-- Cargo la página solicitada
         petition = FORM_FINAL.replace("HTML_EXTRA", html_extra);
-        resource = "html";
-        res.setHeader('Content-Type', mimetype);
-        res.write(petition);
-        res.end();
-        return
-    } else if (url.pathname == '/html/seccion4k.html'){
-        let descripcion = tienda[1]["productos"][2]["descripcion"];
-        let precio = "Precio: " + tienda[1]["productos"][2]["precio"];
-        petition = seccion4K.replace("HTML_EXTRA", descripcion);
-        petition = petition.replace("PRECIO", precio);
-        resource = "html";
-        res.setHeader('Content-Type', mimetype);
-        res.write(petition);
-        res.end();
-        return
-    } else if (url.pathname == '/html/seccionbluray.html'){
-        let descripcion = tienda[1]["productos"][0]["descripcion"];
-        let precio = "Precio: " + tienda[1]["productos"][0]["precio"];
-        petition = seccionBR.replace("HTML_EXTRA", descripcion);
-        petition = petition.replace("PRECIO", precio);
-        resource = "html";
-        res.setHeader('Content-Type', mimetype);
-        res.write(petition);
-        res.end();
-        return
-    } else if (url.pathname == '/html/seccionsteelbook.html'){
-        let descripcion = tienda[1]["productos"][1]["descripcion"];
-        let precio = "Precio: " + tienda[1]["productos"][1]["precio"];
-        petition = seccionST.replace("HTML_EXTRA", descripcion);
-        petition = petition.replace("PRECIO", precio);
         resource = "html";
         res.setHeader('Content-Type', mimetype);
         res.write(petition);
@@ -360,7 +298,7 @@ const server = http.createServer((req, res) => {
         return
     } else {            
         //-- Si se pide cualquier otro recurso
-        //-- Obtengo el nombre y los datos de la compra de la url en caso de que los haya
+        //-- Obtengo el nombre y los parametros de la compra de la url en caso de que los haya
         nombre = url.searchParams.get('nombre');
         let envio = url.searchParams.get('envio');
         let tarjeta = url.searchParams.get('tarjeta');
@@ -368,12 +306,12 @@ const server = http.createServer((req, res) => {
         let cantidadBluray = url.searchParams.get('cantidadBluray');
         let cantidadSteel = url.searchParams.get('cantidadSteel');
 
-        //console.log("Nombre: " + nombre);
-        if (nombre != null) {           //-- Estamos saliendo de la pagina de login               
+        //-- Si estamos saliendo de la pagina de login
+        if (nombre != null) {               
             let html_extra = "";
-            if (nombre == tienda[0]["usuarios"][0]["nombre"] || nombre == tienda[0]["usuarios"][1]["nombre"] || nombre == tienda[0]["usuarios"][2]["nombre"]) {
+            if (nombre == tienda[0]["usuarios"][0]["nombre"] || nombre == tienda[0]["usuarios"][1]["nombre"] 
+            || nombre == tienda[0]["usuarios"][2]["nombre"]) {
                 //-- Devolver la pagina de bienvenida correspondiente
-                //console.log("Usuario registrado");
                 petition = RESPUESTA.replace("NOMBRE", nombre);
                 html_extra = "<h2>Bienvenid@ a mi tienda!!</h2>";
                 petition = petition.replace("HTML_EXTRA", html_extra);
@@ -387,8 +325,8 @@ const server = http.createServer((req, res) => {
                 //-- Devolver la pagina de bienvenida de error
                 nombre = "Desconocido";
                 petition = RESPUESTA.replace("NOMBRE", nombre);
-                //console.log("Usuario desconocido");
-                html_extra = "<h2>Tu usuario no se encuentra en la base de datos</h2>";
+                html_extra = "<h2>Tu usuario no se encuentra en la base de datos</h2>\n \
+                Prueba: Root, El coleccionista o La compra-pelis";
                 petition = petition.replace("HTML_EXTRA", html_extra);
             }
             resource = "html";
@@ -431,7 +369,7 @@ const server = http.createServer((req, res) => {
 
             //-- Convertir la variable tienda a cadena JSON para actualizar el stock
             let myJSON = JSON.stringify(tienda);
-            //-- Guardarla en el fichero destino
+            //-- Actualizar el stock
             fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
 
             //-- Devuelvo la página correspondiente a que hemos añadido cosas al carrito
@@ -446,7 +384,7 @@ const server = http.createServer((req, res) => {
         if (envio != null && tarjeta != null) { //-- Estamos saliendo de la pagina de pagar
 
             if (user) {     //-- Si hay usuario procesamos la compra, en caso contrario no
-                //-- Añado los datos del pedido según los valores de los campos extrídos anteriormente
+                //-- Añado los datos del pedido según los valores de los campos extraídos anteriormente
                 tienda[2]["pedidos"][0]["direccion de envio"] = envio;
                 tienda[2]["pedidos"][0]["numero de la tarjeta"] = tarjeta;
                 tienda[2]["pedidos"][0]["nombre de usuario"] = user;
@@ -474,7 +412,7 @@ const server = http.createServer((req, res) => {
 
                 //-- Convertir la variable a cadena JSON
                 let myJSON = JSON.stringify(tienda);
-                //-- Guardarla en el fichero destino
+                //-- Guardarla en el fichero destino para actualizar los datos del pedido
                 fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
                 //-- Como había usuario devuelvo la página de compra exitosa
                 petition = PROC.replace("HTML_EXTRA", "¡Compra realizada!");
@@ -505,12 +443,12 @@ const server = http.createServer((req, res) => {
     //console.log("Nombre del recurso servido: " + petition);
     //console.log("Extension del recurso: " + resource);
 
-    //-- Generar la respusta en función de las variables
+    //-- Generar la respuesta en función de las variables
     //-- code, code_msg
     res.statusCode = code;
     res.statusMessage = code_msg;
 
-    //-- Lectura asincrona de los recursos a mostrar en la pagina
+    //-- Lectura asincrona de los recursos
     fs.readFile(petition, (err, data) => {
         if (err) {
             res.statusCode = 404;

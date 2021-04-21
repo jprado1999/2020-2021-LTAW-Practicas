@@ -48,13 +48,6 @@ caja.oninput = () => {
                 display5.innerHTML += productos[4];
                 display6.innerHTML += productos[5];
 
-                //--Recorrer los productos del objeto JSON
-                for (let i=0; i < productos.length; i++) {
-
-                    master.innerHTML += productos[i];
-
-                }
-
             } else {
                 //-- Hay un error en la petición
                 //-- Lo notificamos en la consola y en la propia web
@@ -64,10 +57,8 @@ caja.oninput = () => {
         }
     }
 
-    console.log(caja.value.length);
-
-    //-- La peticion se realia solo si hay al menos 1 carácter
-    if (caja.value.length >= 3) {   //-- poner un 3
+    //-- La peticion se realiza solo si hay al menos 1 carácter
+    if (caja.value.length >= 3) {
 
       //-- Configurar la petición
       m.open("GET","/resultados?param1=" + caja.value, true);
