@@ -12,10 +12,7 @@ const tienda_json = fs.readFileSync('json/tienda.json');
 const tienda = JSON.parse(tienda_json);
 
 //-- Obtengo el array de productos de mi tienda
-let lista = tienda[3]["lista"];
-//-- Convertir la variable devuelta a un cadena JSON
-lista = JSON.stringify(lista);
-const productos = JSON.parse(lista);
+let productos = tienda[3]["lista"];
 
 //-- Defino una variable para almacenar el resultado de la busqueda
 let resultadoB = "";
