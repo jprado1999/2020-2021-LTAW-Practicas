@@ -343,21 +343,45 @@ const server = http.createServer((req, res) => {
             let cartCookie = "carrito=";
             let cantCookie = "";
 
-            if (cantidad4k != null) {           //-- Coge valor al salir del formulario 4k
+            //-- Se puede comprar cada producto cuando su stock sea mayor que 0
+            if (cantidad4k != null && tienda[1]["productos"][2]["stock"] > 0) { //-- Coge valor al salir del formulario 4k
+                //-- Si se quieren comprar más productos de los que hay en stock
+                //-- la cantidad que compras se ajusta a los máximos productos que haya en stock
+                if ((tienda[1]["productos"][2]["stock"] - cantidad4k) < 0) {
+                    cantidad4k = tienda[1]["productos"][2]["stock"];
+                }
+                //-- Defino el valor de las cookies
                 cartCookie += "4k; path=/";
                 cantCookie += "cantidad4k=" + cantidad4k + "; path=/";
                 //-- Actualizo el stock de la tienda 
                 tienda[1]["productos"][2]["stock"] -= cantidad4k;
-            } else if (cantidadBluray != null) {       //-- Coge valor al salir del formulario blu ray
+
+            } else if (cantidadBluray != null && tienda[1]["productos"][0]["stock"] > 0) { //-- Coge valor al salir del formulario blu ray
+                if ((tienda[1]["productos"][0]["stock"] - cantidadBluray) < 0) {
+                    cantidadBluray = tienda[1]["productos"][0]["stock"];
+                }
                 cartCookie += "Bluray; path=/";
                 cantCookie += "cantidadBluray=" + cantidadBluray + "; path=/";
                 //-- Actualizo el stock de la tienda
                 tienda[1]["productos"][0]["stock"] -= cantidadBluray;
-            } else if (cantidadSteel != null) {        //-- Coge valor al salir del formulario Steelbook
+
+            } else if (cantidadSteel != null && tienda[1]["productos"][1]["stock"] > 0) { //-- Coge valor al salir del formulario Steelbook
+                if ((tienda[1]["productos"][1]["stock"] - cantidadSteel) < 0) {
+                    cantidadSteel = tienda[1]["productos"][1]["stock"];
+                }
                 cartCookie += "Steelbook; path=/";
                 cantCookie += "cantidadSteelbook=" + cantidadSteel + "; path=/";
                 //-- Actualizo el stock de la tienda
                 tienda[1]["productos"][1]["stock"] -= cantidadSteel;
+            } else {
+                //-- Devuelvo una pagina indicando el error
+                //-- No envio ninguna cookie ni modifico el archivo json
+                petition = PROC.replace("HTML_EXTRA", "No queda stock del producto que quieres comprar");
+                resource = "html";
+                res.setHeader('Content-Type', mimetype);
+                res.write(petition);
+                res.end();
+                return
             }
 
             //-- Envio la cookie del carrito y la cantidad 
