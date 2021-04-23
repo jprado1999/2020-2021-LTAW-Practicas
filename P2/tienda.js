@@ -295,8 +295,9 @@ const server = http.createServer((req, res) => {
         return
     } else {            
         //-- Si se pide cualquier otro recurso
-        //-- Obtengo el nombre y los parametros de la compra de la url en caso de que los haya
+        //-- Obtengo el nombre, contraseña y los parametros de la compra de la url en caso de que los haya
         nombre = url.searchParams.get('nombre');
+        let contraseña = url.searchParams.get('contraseña');
         let envio = url.searchParams.get('envio');
         let tarjeta = url.searchParams.get('tarjeta');
         let cantidad4k = url.searchParams.get('cantidad4k');
@@ -304,10 +305,12 @@ const server = http.createServer((req, res) => {
         let cantidadSteel = url.searchParams.get('cantidadSteel');
 
         //-- Si estamos saliendo de la pagina de login
-        if (nombre != null) {               
+        if (nombre != null && contraseña != null) {               
             let html_extra = "";
-            if (nombre == tienda[0]["usuarios"][0]["nombre"] || nombre == tienda[0]["usuarios"][1]["nombre"] 
-            || nombre == tienda[0]["usuarios"][2]["nombre"]) {
+            //-- Evalúo el usuario y contraseña de los distintos usuarios
+            if ((nombre == tienda[0]["usuarios"][0]["nombre"] && contraseña == tienda[0]["usuarios"][0]["contraseña"]) 
+            || (nombre == tienda[0]["usuarios"][1]["nombre"] && contraseña == tienda[0]["usuarios"][1]["contraseña"])
+            || (nombre == tienda[0]["usuarios"][2]["nombre"] && contraseña == tienda[0]["usuarios"][2]["contraseña"])) {
                 //-- Devolver la pagina de bienvenida correspondiente
                 petition = RESPUESTA.replace("NOMBRE", nombre);
                 html_extra = "<h2>Bienvenid@ a mi tienda!!</h2>";
@@ -320,10 +323,10 @@ const server = http.createServer((req, res) => {
                 res.setHeader('Set-Cookie', sendCookie);
             } else {
                 //-- Devolver la pagina de bienvenida de error
-                nombre = "Desconocido";
+                nombre = "Desconocido o contraseña incorrecta";
                 petition = RESPUESTA.replace("NOMBRE", nombre);
-                html_extra = "<h2>Tu usuario no se encuentra en la base de datos</h2>\n \
-                Prueba: Root, El coleccionista o La compra-pelis";
+                html_extra = "<h2>Tu usuario o contraseña no son correctos</h2>\n \
+                Prueba los usuarios: 'Root', 'El coleccionista' o 'La compra-pelis' y la contraseña: LTAW";
                 petition = petition.replace("HTML_EXTRA", html_extra);
             }
             resource = "html";

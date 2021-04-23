@@ -3,17 +3,20 @@
         {
             "nombre": "Root",
             "nombre real": "Jorge Prado Fernández",
-            "email": "jprado@elbauldelcoleccionista.es"
+            "email": "jprado@elbauldelcoleccionista.es",
+            "contraseña": "LTAW"
         },
         {
             "nombre": "El coleccionista",
-            "login": "Jose García Pedraza",
-            "email": "micoleccionesmasgrandequelatuya@gmail.es"
+            "nombre real": "Jose García Pedraza",
+            "email": "micoleccionesmasgrandequelatuya@gmail.es",
+            "contraseña": "LTAW"
         },
         {
             "nombre": "La compra-pelis",
-            "login": "María del Cine Antiguo",
-            "email": "arrasatiendas@gmail.es"
+            "nombre real": "María del Cine Antiguo",
+            "email": "arrasatiendas@gmail.es",
+            "contraseña": "LTAW"
         }
     ]},
     {"productos": [
