@@ -57,7 +57,7 @@ caja.oninput = () => {
         }
     }
 
-    //-- La peticion se realiza solo si hay al menos 1 carácter
+    //-- La peticion se realiza solo si hay al menos 3 caracteres
     if (caja.value.length >= 3) {
 
       //-- Configurar la petición
