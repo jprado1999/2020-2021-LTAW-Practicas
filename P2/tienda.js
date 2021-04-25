@@ -208,6 +208,12 @@ const server = http.createServer((req, res) => {
         petition += '/json/tienda.json';
         resource = petition.split(".")[1];
         petition = "." + petition;            
+    } else if (url.pathname == '/pedidos') {        //-- Pedidos pendientes
+        if (user == 'Root') {
+            petition += '/json/resultado.json';
+            resource = petition.split(".")[1];
+            petition = "." + petition;
+        }
     } else if (url.pathname == '/resultados') {     //-- Peticion AJAX
         console.log("Peticion de Productos!")
         mimetype = "application/json";
