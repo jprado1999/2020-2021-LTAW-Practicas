@@ -6,6 +6,13 @@ const colors = require('colors');
 
 const PUERTO = 8080;
 
+//-- Defino una variable para almacenar la cantidad de usuarios
+let users = 0;
+
+//-- Defino una variable para obtener la fecha actual
+let date = new Date();
+
+
 //-- Crear una nueva aplicacion web
 const app = express();
 
@@ -40,14 +47,24 @@ io.on('connect', (socket) => {
     //-- Envio un mensaje a todos los clientes anunciando que alguien se ha unido
     io.send("Un nuevo usuario se ha unido al Chat");
 
+    //-- Aumento la cantidad de usuarios
+    users += 1;
+
     //-- Mensaje de bienvenida, solo lo ve el cliente que se conecta
     socket.send("Has entrado en el Chat");
   
     console.log('** NUEVA CONEXIÓN **'.yellow);
 
+    console.log("Usuarios: " + users);
+
     //-- Evento de desconexión
     socket.on('disconnect', function(){
         console.log('** CONEXIÓN TERMINADA **'.yellow);
+
+        //-- Decremento en 1 a los usuarios del chat
+        users -= 1;
+
+        console.log("Usuarios: " + users);
     });  
 
     //-- Mensaje recibido: Reenviarlo a todos los clientes conectados
@@ -58,11 +75,11 @@ io.on('connect', (socket) => {
         if (msg == '/help') {
             socket.send(comandos);
         } else if (msg == '/list') {
-            socket.send("Lista de usuarios conectados")
+            socket.send("Actualmente hay " + users + " usuarios conectados");
         } else if (msg == '/hello') {
-            socket.send("Heeey I'm the server. How are you?")
+            socket.send("Heeey I'm the server. How are you?");
         } else if (msg == '/date') {
-            socket.send("Hoy es: ")
+            socket.send("Hoy es: " + date);
         } else {
             //-- Reenvio el mensaje a todos los clientes conectados
             io.send(msg);
