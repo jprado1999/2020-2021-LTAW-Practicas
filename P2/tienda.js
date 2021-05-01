@@ -412,45 +412,63 @@ const server = http.createServer((req, res) => {
         }
 
         if (envio != null && tarjeta != null) { //-- Estamos saliendo de la pagina de pagar
+            
+            //-- Compruebo que tengo usuario 
+            if (user) {
 
-            if (user) {     //-- Si hay usuario procesamos la compra, en caso contrario no
-                //-- Añado los datos del pedido según los valores de los campos extraídos anteriormente
-                tienda[2]["pedidos"][0]["direccion de envio"] = envio;
-                tienda[2]["pedidos"][0]["numero de la tarjeta"] = tarjeta;
-                tienda[2]["pedidos"][0]["nombre de usuario"] = user;
-
-                //-- Compruebo si tengo la cookie del carrito para añadir los productos al json
+                //-- Compruebo si tengo la cookie del carrito
                 let cart = get_cart(req);
                 let cantidad = get_cantidad(req);
                 console.log("Producto: " + cart + " - cantidad: " + cantidad);
-                if (cart != null & cantidad != null) {
-                    //-- En esta version solo se puede comprar un producto
-                    //-- El que esté en la cookie del carrito
-                    if (cart == "4k") {
-                        tienda[2]["pedidos"][0]["productos"][0]["nombre"] = cart;
-                        tienda[2]["pedidos"][0]["productos"][0]["cantidad"] = cantidad;
-                    } else if (cart == "Bluray") {
-                        tienda[2]["pedidos"][0]["productos"][1]["nombre"] = cart;
-                        tienda[2]["pedidos"][0]["productos"][1]["cantidad"] = cantidad;
-                    } else if (cart == "Steelbook") {
-                        tienda[2]["pedidos"][0]["productos"][2]["nombre"] = cart;
-                        tienda[2]["pedidos"][0]["productos"][2]["cantidad"] = cantidad;
-                    }
-                } else {
-                    console.log("Hay un problema con la cantidad o tipo de productos");
-                }
 
-                //-- Convertir la variable a cadena JSON
-                let myJSON = JSON.stringify(tienda);
-                //-- Guardarla en el fichero destino para actualizar los datos del pedido
-                fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
-                //-- Como había usuario devuelvo la página de compra exitosa
-                petition = PROC.replace("HTML_EXTRA", "¡Compra realizada!");
-                resource = "html";
-                res.setHeader('Content-Type', mimetype);
-                res.write(petition);
-                res.end();
-                return
+                if (cart != null) {     //-- Compruebo si hay productos en el carrito
+                    //-- Añado los datos del pedido según los valores de los campos extraídos anteriormente
+                    tienda[2]["pedidos"][0]["direccion de envio"] = envio;
+                    tienda[2]["pedidos"][0]["numero de la tarjeta"] = tarjeta;
+                    tienda[2]["pedidos"][0]["nombre de usuario"] = user;
+
+                    if (cantidad != null) {
+                        //-- En esta version solo se puede comprar un producto
+                        //-- El que esté en la cookie del carrito
+                        if (cart == "4k") {
+                            tienda[2]["pedidos"][0]["productos"][0]["nombre"] = cart;
+                            tienda[2]["pedidos"][0]["productos"][0]["cantidad"] = cantidad;
+                        } else if (cart == "Bluray") {
+                            tienda[2]["pedidos"][0]["productos"][1]["nombre"] = cart;
+                            tienda[2]["pedidos"][0]["productos"][1]["cantidad"] = cantidad;
+                        } else if (cart == "Steelbook") {
+                            tienda[2]["pedidos"][0]["productos"][2]["nombre"] = cart;
+                            tienda[2]["pedidos"][0]["productos"][2]["cantidad"] = cantidad;
+                        }
+                    } else {
+                        console.log("No hay productos en el carrito");
+                    }
+
+                    //-- Vacio la cookie del carrito
+                    let cartCookie = "carrito=; path=/";
+                    res.setHeader('Set-Cookie', cartCookie);
+
+                    //-- Convertir la variable a cadena JSON
+                    let myJSON = JSON.stringify(tienda);
+                    //-- Guardarla en el fichero destino para actualizar los datos del pedido
+                    fs.writeFileSync(FICHERO_JSON_OUT, myJSON);
+
+                    //-- Como había usuario devuelvo la página de compra exitosa
+                    petition = PROC.replace("HTML_EXTRA", "¡Compra realizada!");
+                    resource = "html";
+                    res.setHeader('Content-Type', mimetype);
+                    res.write(petition);
+                    res.end();
+                    return
+                } else {
+                    //-- Como no había usuario devuelvo la página de compra fallida
+                    petition = PROC.replace("HTML_EXTRA", "No se ha podido realizar la compra, no hay productos en el carrito");
+                    resource = "html";
+                    res.setHeader('Content-Type', mimetype);
+                    res.write(petition);
+                    res.end();
+                    return
+                }
             } else {
                 //-- Como no había usuario devuelvo la página de compra fallida
                 petition = PROC.replace("HTML_EXTRA", "No se ha podido realizar la compra, usuario no registrado");
@@ -461,13 +479,13 @@ const server = http.createServer((req, res) => {
                 return
             }
         }
-         
         //-- Le doy valor a la peticion para devolver la pagina pedida sea cual sea
         petition = url.pathname; 
         //-- Me guardo el tipo de recurso pedido, separando su nombre de la extension
         resource = petition.split(".")[1];
         //-- Le añado un punto para que el sistema pueda buscarlo y mostrarlo
         petition = "." + petition;
+
     }
 
     //console.log("Nombre del recurso servido: " + petition);
