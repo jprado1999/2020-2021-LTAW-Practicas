@@ -5,6 +5,7 @@ html {
 body {
   background-image: url(../img/fondo.jpg);
   width: 600px;
+  font-family: 'Goudy Bookletter 1911', serif;
 }
 
 h2 {
