@@ -45,13 +45,13 @@ app.use(express.static('public'));
 io.on('connect', (socket) => {
 
     //-- Envio un mensaje a todos los clientes anunciando que alguien se ha unido
-    io.send("Un nuevo usuario se ha unido al Chat");
+    io.send("Un nuevo usuario se ha unido al Cyber-Chat");
 
     //-- Aumento la cantidad de usuarios
     users += 1;
 
     //-- Mensaje de bienvenida, solo lo ve el cliente que se conecta
-    socket.send("Has entrado en el Chat");
+    socket.send("Has entrado en el Cyber-Chat");
   
     console.log('** NUEVA CONEXIÓN **'.yellow);
 
