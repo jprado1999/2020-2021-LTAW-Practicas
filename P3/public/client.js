@@ -8,7 +8,7 @@ const socket = io();
 
 socket.on("message", (msg)=>{
 
-  display.innerHTML += '<p style="color:blue">' + msg + '</p>';
+  display.innerHTML += '<p style="color:blue">' + "> " + msg + '</p>';
   //-- Reproduzco el sonido cuando nos llega un mensaje
   document.getElementById("audio").play();
 

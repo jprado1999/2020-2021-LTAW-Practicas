@@ -1,20 +1,24 @@
+body {
+    background-image: url("fondo.jpg");
+}
+
 .edges {
-    border: 5px solid black;
+    border: 5px double red;
     border-radius: 10px;
-    background-color: rgb(145, 219, 241);
+    background-image: url("fondo.jpg");
     margin: auto;
     box-sizing: content-box;
     width: 1000px;
-    height: 590px;
+    height: 610px;
     position: relative;
-    padding: 25px;
+    padding: 15px;
 }
 
 
 .chat {
     border: 5px solid black;
     border-radius: 10px;
-    background-color: rgb(173, 243, 10);
+    background-color: rgb(71, 153, 247);
     margin: auto;
     box-sizing: content-box;
     width: 900px;
@@ -22,13 +26,18 @@
     position: relative;
     padding: 25px;
     overflow: auto;
+    font-family: 'Quantico', sans-serif;
 }
 
-h3 {
-    margin-left: 375px;
+h1 {
+    margin-left: 390px;
+    margin-bottom: 25px;
+    color: red;
+    font-family: 'Quantico', sans-serif;
 }
 
 .write {
-    margin-top: 25px;
-    margin-left: 375px;
+    margin-top: 15px;
+    margin-left: 245px;
+    width: 500px;
 }
