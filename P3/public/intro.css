@@ -1,0 +1,34 @@
+.edges {
+    border: 5px solid black;
+    border-radius: 10px;
+    background-color: rgb(145, 219, 241);
+    margin: auto;
+    box-sizing: content-box;
+    width: 1000px;
+    height: 590px;
+    position: relative;
+    padding: 25px;
+}
+
+
+.chat {
+    border: 5px solid black;
+    border-radius: 10px;
+    background-color: rgb(173, 243, 10);
+    margin: auto;
+    box-sizing: content-box;
+    width: 900px;
+    height: 410px;
+    position: relative;
+    padding: 25px;
+    overflow: auto;
+}
+
+h3 {
+    margin-left: 375px;
+}
+
+.write {
+    margin-top: 25px;
+    margin-left: 375px;
+}

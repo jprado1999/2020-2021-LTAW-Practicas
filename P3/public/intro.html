@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat</title>
+  <link rel="stylesheet" href="intro.css">
 
   <!-- Cargar la biblioteca Socket.IO. Nos la debe entregar el servidor -->
   <script src="/socket.io/socket.io.js"></script>
@@ -14,10 +15,16 @@
 </head>
 
 <body>
-  <h2>Chat</h2>
-  <input type="text" placeholder="Escribe aquí los mensajes..." autocomplete="off" id="msg_entry">
-  <h3>Mensajes recibidos</h3>
-  <p id="display"></p>
+  
+  <div class="edges">
+    <h3>Mensajes recibidos</h3>
+    <div class="chat">
+      <p id="display"></p>
+    </div>
+  
+    <input class="write" type="text" placeholder="Escribe aquí los mensajes..." autocomplete="off" id="msg_entry">
+  </div>
+  
   <audio id="audio" src="sable-laser.mp3" preload="auto"></audio>
 </body>
 </html>
