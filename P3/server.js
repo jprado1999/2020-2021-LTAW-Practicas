@@ -28,10 +28,8 @@ const comandos = "<p style='color:red'>/help: Devuelve una lista con los comando
 <p style='color:red'>/date: Devuelve la fecha actual</p>";
 
 //-------- PUNTOS DE ENTRADA DE LA APLICACION WEB
-//-- Definir el punto de entrada principal de mi aplicación web
-app.get('/', (req, res) => {
-    res.send('Bienvenido a mi aplicación Web!!!' + '<p><a href="/intro.html">Entrar al Chat</a></p>');
-});
+//-- El punto de entrada por defecto es la carpeta /public
+//-- de forma que siempre coja el fichero index.html
 
 //-- Esto es necesario para que el servidor le envíe al cliente la
 //-- biblioteca socket.io para el cliente
@@ -68,21 +66,35 @@ io.on('connect', (socket) => {
     });  
 
     //-- Mensaje recibido: Reenviarlo a todos los clientes conectados
-    socket.on("message", (msg)=> {
+    socket.on("msg", (msg)=> {
         console.log("Mensaje Recibido!: " + msg.blue);
+        
+        //-- Reenvio el mensaje a todos los clientes conectados
+        io.send(msg);
+    });
 
+    socket.on("cmd", (msg) => {
         //-- Un cliente teclea un comando
-        if (msg == '/help') {
-            socket.send(comandos);
-        } else if (msg == '/list') {
-            socket.send("Actualmente hay " + users + " usuarios conectados");
-        } else if (msg == '/hello') {
-            socket.send("Heeey I'm the server. How are you?");
-        } else if (msg == '/date') {
-            socket.send("Hoy es: " + date);
-        } else {
-            //-- Reenvio el mensaje a todos los clientes conectados
-            io.send(msg);
+        console.log("Comando Recibido!: " + msg.blue);
+        
+        //-- Veo si el comando está en los que tengo definidos
+        //-- y envío la informacion correspondiente solo al usuario que la solicita
+        switch (msg) {
+            case '/help':
+                socket.send(comandos);
+                break;
+            case '/list':
+                socket.send("Actualmente hay " + users + " usuarios conectados");
+                break;
+            case '/hello':
+                socket.send("Heeey I'm the Cyber-Server of Coruscant. How are you?");
+                break;
+            case '/date':
+                socket.send("Hoy es: " + date);
+                break;
+            default:
+                socket.send("No se reconoce el comando introducido");
+                break;
         }
 
     });

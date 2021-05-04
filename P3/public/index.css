@@ -1,0 +1,13 @@
+body {
+    background-image: url("fondo.jpg");
+}
+
+h1 {
+    padding: auto;
+    border: 5px double red;
+    width: 250px;
+    margin-left: 500px;
+    margin-top: 300px;
+    color: red;
+    font-family: 'Quantico', sans-serif;
+}
