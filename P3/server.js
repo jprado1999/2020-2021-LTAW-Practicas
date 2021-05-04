@@ -84,7 +84,11 @@ io.on('connect', (socket) => {
                 socket.send(comandos);
                 break;
             case '/list':
-                socket.send("Actualmente hay " + users + " usuarios conectados");
+                if (users > 1) {
+                    socket.send("Actualmente hay " + users + " usuarios conectados");
+                } else {
+                    socket.send("Actualmente hay " + users + " usuario conectado");
+                } 
                 break;
             case '/hello':
                 socket.send("Heeey I'm the Cyber-Server of Coruscant. How are you?");
