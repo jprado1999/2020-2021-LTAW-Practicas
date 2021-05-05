@@ -9,9 +9,14 @@ const PUERTO = 8080;
 //-- Defino una variable para almacenar la cantidad de usuarios
 let users = 0;
 
+//-- Mensaje con comandos para cuando lo pida un cliente
+const comandos = "<p style='color:red'>/help: Devuelve una lista con los comandos disponibles</p> \
+<p style='color:red'>/list: Devuelve el número de usuarios conectados</p> \
+<p style='color:red'>/hello: Devuelve un saludo por parte del servidor</p> \
+<p style='color:red'>/date: Devuelve la fecha actual</p>";
+
 //-- Defino una variable para obtener la fecha actual
 let date = new Date();
-
 
 //-- Crear una nueva aplicacion web
 const app = express();
@@ -21,11 +26,6 @@ const server = http.Server(app);
 
 //-- Crear el servidor de websockets, asociado al servidor http
 const io = socket(server);
-
-const comandos = "<p style='color:red'>/help: Devuelve una lista con los comandos disponibles</p> \
-<p style='color:red'>/list: Devuelve el número de usuarios conectados</p> \
-<p style='color:red'>/hello: Devuelve un saludo por parte del servidor</p> \
-<p style='color:red'>/date: Devuelve la fecha actual</p>";
 
 //-------- PUNTOS DE ENTRADA DE LA APLICACION WEB
 //-- El punto de entrada por defecto es la carpeta /public
@@ -41,9 +41,6 @@ app.use(express.static('public'));
 //------------------- GESTION SOCKETS IO
 //-- Evento: Nueva conexion recibida
 io.on('connect', (socket) => {
-
-    //-- Envio un mensaje a todos los clientes anunciando que alguien se ha unido
-    io.send("Un nuevo usuario se ha unido al Cyber-Chat");
 
     //-- Aumento la cantidad de usuarios
     users += 1;
@@ -62,47 +59,56 @@ io.on('connect', (socket) => {
         //-- Decremento en 1 a los usuarios del chat
         users -= 1;
 
+        //-- Envio un mensaje a todos los usuarios para informar
+        io.send("Un usuario ha abandonado el Cyber-Chat");
+
         console.log("Usuarios: " + users);
     });  
 
-    //-- Mensaje recibido: Reenviarlo a todos los clientes conectados
-    socket.on("msg", (msg)=> {
-        console.log("Mensaje Recibido!: " + msg.blue);
-        
-        //-- Reenvio el mensaje a todos los clientes conectados
-        io.send(msg);
+    //-- Mensaje para todos los usuarios
+    socket.on('nick', (nick) => {
+        io.send(nick + " ha entrado en el Cyber-Chat");
+
+        //-- Mensaje recibido: Va dirigido a todos los clientes
+        socket.on("msg", (msg)=> {
+            console.log("Mensaje Recibido!: " + msg.blue);
+            
+            //-- Reenvio el mensaje a todos los clientes conectados
+            msg = nick + ": " + msg;
+            io.send(msg);
+        });
+
+        //-- Comando recibido
+        socket.on("cmd", (msg) => {
+            
+            console.log("Comando Recibido!: " + msg.blue);
+            
+            //-- Veo si el comando está en los que tengo definidos
+            //-- y envío la informacion correspondiente solo al usuario que la solicita
+            switch (msg) {
+                case '/help':
+                    socket.send(comandos);
+                    break;
+                case '/list':
+                    if (users > 1) {
+                        socket.send("Actualmente hay " + users + " usuarios conectados");
+                    } else {
+                        socket.send("Actualmente hay " + users + " usuario conectado");
+                    } 
+                    break;
+                case '/hello':
+                    socket.send("Heeey I'm the Cyber-Server of Coruscant. How are you?");
+                    break;
+                case '/date':
+                    socket.send("Hoy es: " + date);
+                    break;
+                default:
+                    socket.send("No se reconoce el comando introducido");
+                    break;
+            }
+
+        });
     });
-
-    socket.on("cmd", (msg) => {
-        //-- Un cliente teclea un comando
-        console.log("Comando Recibido!: " + msg.blue);
-        
-        //-- Veo si el comando está en los que tengo definidos
-        //-- y envío la informacion correspondiente solo al usuario que la solicita
-        switch (msg) {
-            case '/help':
-                socket.send(comandos);
-                break;
-            case '/list':
-                if (users > 1) {
-                    socket.send("Actualmente hay " + users + " usuarios conectados");
-                } else {
-                    socket.send("Actualmente hay " + users + " usuario conectado");
-                } 
-                break;
-            case '/hello':
-                socket.send("Heeey I'm the Cyber-Server of Coruscant. How are you?");
-                break;
-            case '/date':
-                socket.send("Hoy es: " + date);
-                break;
-            default:
-                socket.send("No se reconoce el comando introducido");
-                break;
-        }
-
-    });
-
 });
 
 //-- Lanzar el servidor HTTP

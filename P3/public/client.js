@@ -5,7 +5,17 @@ const msg_entry = document.getElementById("msg_entry");
 //-- Crear un websocket. Se establece la conexión con el servidor
 const socket = io();
 
+//-- Pedimos un nick al usuario nada mas entrar en el chat
+var nick = prompt("Elige un nick para chatear");
+if (nick == null || nick == "") {
+  nick = prompt("No has elegido un nick, esta es la última oportunidad");
+}
+console.log(nick);
 
+//-- Le enviamos al servidor el nick del usuario
+socket.emit('nick', nick);
+
+//-- Gestiono la representacion de los mensajes
 socket.on("message", (msg)=>{
 
   display.innerHTML += '<p style="color:blue">' + "> " + msg + '</p>';
