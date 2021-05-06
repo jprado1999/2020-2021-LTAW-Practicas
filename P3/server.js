@@ -16,7 +16,8 @@ let nicknamesArray = [];
 const comandos = "<p style='color:red'>/help: Devuelve una lista con los comandos disponibles</p> \
 <p style='color:red'>/list: Devuelve el número de usuarios conectados</p> \
 <p style='color:red'>/hello: Devuelve un saludo por parte del servidor</p> \
-<p style='color:red'>/date: Devuelve la fecha actual</p>";
+<p style='color:red'>/date: Devuelve la fecha actual</p> \
+<p style='color:red'>/clear: Vacía el chat</p>";
 
 //-- Defino una variable para obtener la fecha actual
 let date = new Date();
