@@ -3,12 +3,21 @@ const socket = require('socket.io');
 const http = require('http');
 const express = require('express');
 const colors = require('colors');
+const ip = require('ip');
 
 //-- Cargar el módulo de electron
 const electron = require('electron');
 console.log("Arrancando electron...");
 
 const PUERTO = 8080;
+
+//-- Obtengo la direccion IP de mi maquina
+let ip_address = ip.address()
+//console.log(ip_address);
+
+//-- Creo la variable con la direccion IP y el puerto
+let ip_send = "http://" + ip_address + ":" + PUERTO + "/chat.html";
+console.log(ip_send);
 
 //-- Defino una variable para almacenar la cantidad de usuarios
 let users = 0;
@@ -61,6 +70,18 @@ electron.app.on('ready', ()=>{
             nodeIntegration: true,
             contextIsolation: false
         }
+    });
+
+     //-- Cargar interfaz gráfica en HTML
+    win.loadFile("frontpage.html");
+
+    //-- Esperar a que la página se cargue y se muestre
+    //-- y luego enviar el mensaje al proceso de renderizado para que 
+    //-- lo saque por la interfaz gráfica
+
+    win.on('ready-to-show', () => {
+        console.log("Enviando IP y puerto");
+        win.webContents.send('ip', ip_send);
     });
 });
 
