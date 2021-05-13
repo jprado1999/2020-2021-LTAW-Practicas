@@ -1,12 +1,17 @@
 {
-    "name": "mi-electron-app",
-    "description": "Esta es mi primera aplicación de escritorio en Electron",
+    "name": "electron-cyber-chat",
+    "description": "Este es mi Cyber-Chat, ahora en Electron",
     "version": "0.1.0",
     "main": "main.js",
     "scripts": {
         "start": "electron ."
     },
     "dependencies": {
-        "electron": "^12.0.7"
+        "colors": "^1.4.0",
+        "electron": "^12.0.7",
+        "express": "^4.17.1",
+        "qrcode-terminal": "^0.12.0",
+        "socket.io": "^4.1.1",
+        "websocket": "^1.0.34"
     }
 }

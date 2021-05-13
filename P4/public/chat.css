@@ -1,0 +1,43 @@
+body {
+    background-image: url("fondo.jpg");
+}
+
+.edges {
+    border: 5px double red;
+    border-radius: 10px;
+    background-image: url("fondo.jpg");
+    margin: auto;
+    box-sizing: content-box;
+    width: 1000px;
+    height: 610px;
+    position: relative;
+    padding: 15px;
+}
+
+
+.chat {
+    border: 5px solid black;
+    border-radius: 10px;
+    background-color: rgb(71, 153, 247);
+    margin: auto;
+    box-sizing: content-box;
+    width: 900px;
+    height: 410px;
+    position: relative;
+    padding: 25px;
+    overflow: auto;
+    font-family: 'Quantico', sans-serif;
+}
+
+h1 {
+    margin-left: 390px;
+    margin-bottom: 25px;
+    color: red;
+    font-family: 'Quantico', sans-serif;
+}
+
+.write {
+    margin-top: 15px;
+    margin-left: 245px;
+    width: 500px;
+}
