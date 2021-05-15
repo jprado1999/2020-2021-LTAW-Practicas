@@ -36,6 +36,11 @@ electron.ipcRenderer.on('ip', (event, message) => {
     info4.textContent = message;
 });
 
+electron.ipcRenderer.on('users', (event, message) => {
+    console.log("Usuarios: " + message);
+    info5.textContent = message;
+});
+
 btn_test.onclick = () => {
     display.innerHTML += "TEST! ";
     console.log("Botón apretado!");

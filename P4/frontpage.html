@@ -18,20 +18,40 @@
     <title>Front Page</title>
 </head>
 <body>
-    <h1>INTERFAZ GRÁFICA</h1>
+    <div>
+        <h1>INTERFAZ GRÁFICA DEL CYBER-CHAT</h1>
+    </div>
 
-    <hr>
-    <h2>Información:</h2>
-    <ul>
-        <li>Version de Node: <span id="info1" class="blue"></span> </li>
-        <li>Version de Chrome: <span id="info2" class="blue"></span></li>
-        <li>Version de Electron: <span id="info3" class="blue"></span></li>
-        <li>Dirección IP: <a href="chat.html"><span id="info4" class="blue"></span></a></li>
-    </ul>
+    <div class="grid">
+        <hr>
+        <div class="one">
+            <h2>Información:</h2>
+            <ul>
+                <li>Version de Node: <span id="info1" class="blue"></span> </li>
+                <li>Version de Chrome: <span id="info2" class="blue"></span></li>
+                <li>Version de Electron: <span id="info3" class="blue"></span></li>
+            </ul>
 
-    <hr>
-    <p>   <input type="button" value="Test" id="btn_test"> </p>
-   <p>Display:</p>
-    <p id="display"></p>
+                <hr>
+
+                <h2>Usuarios conectados</h2>
+                <span id="info5" class="blue"></span>
+
+                <hr>
+
+                <h2>Dirección IP del Cyber-Chat</h2>
+                <span id="info4" class="blue"></span>
+        
+        </div>
+        
+        <div class="two">
+            <h2>Mensaje de prueba</h2>
+            <p>   <input type="button" value="Enviar mensaje" id="btn_test"> </p>
+            <h2>Mensajes del chat:</h2>
+            <p id="display"></p>
+        </div>
+
+    </div>
+    
 </body>
 </html>

@@ -10,6 +10,29 @@ h1 {
     color: blue;
 }
 
+.grid {
+  display: grid;
+	grid-template-columns: repeat(2, 1fr);
+  grid-gap: 30px;
+}
+
+.one {
+  padding-left: 10px;
+  border: solid;
+  border-radius: 5px;
+  border-color: red;
+  grid-row: 1;
+  grid-column: 1;
+}
+
+.two {
+  border: solid;
+  border-radius: 5px;
+  border-color: red;
+  grid-row: 1;
+  grid-column: 2;
+}
+
   #display {
       border: 2px solid lightblue;
       padding: 10px;

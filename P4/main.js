@@ -16,7 +16,7 @@ let ip_address = ip.address()
 //console.log(ip_address);
 
 //-- Creo la variable con la direccion IP y el puerto
-let ip_send = "http://" + ip_address + ":" + PUERTO + "/chat.html";
+let ip_send = "http://" + ip_address + ":" + PUERTO + "/index.html";
 console.log(ip_send);
 
 //-- Defino una variable para almacenar la cantidad de usuarios
@@ -82,6 +82,11 @@ electron.app.on('ready', ()=>{
     win.on('ready-to-show', () => {
         console.log("Enviando IP y puerto");
         win.webContents.send('ip', ip_send);
+    });
+
+    win.on('ready-to-show', () => {
+        console.log("Enviando numero de usuarios");
+        win.webContents.send('users', users);
     });
 });
 
