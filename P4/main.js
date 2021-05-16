@@ -92,6 +92,13 @@ electron.app.on('ready', ()=>{
         console.log("Enviando numero de usuarios");
         win.webContents.send('users', users);
     });
+
+    //- Proceso para enviar un mensaje a todos los usuarios
+    electron.ipcMain.handle('test', (event, msg) => {
+        console.log("Mensaje desde el renderizado: " + msg);
+        io.send(msg);
+    });
+
 });
 
 //------------------- GESTION SOCKETS IO
@@ -143,15 +150,10 @@ io.on('connect', (socket) => {
             io.send(msg);
 
             win.on('ready-to-show', () => {
-                console.log("Enviando numero de usuarios");
+                console.log("Enviando mensaje del chat");
                 win.webContents.send('msg', msg);
             });
 
-        });
-
-        electron.ipcMain.handle('test', (event, msg) => {
-            console.log("Mensaje desde el renderizado: " + msg);
-            io.send(msg);
         });
 
         //-- Comando recibido

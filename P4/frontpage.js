@@ -60,5 +60,5 @@ btn_test.onclick = () => {
     console.log("Botón apretado!");
 
     //-- Enviar mensaje al proceso principal
-    electron.ipcRenderer.invoke('test', "MENSAJE DE PRUEBA: Boton apretado");
+    electron.ipcRenderer.invoke('test', "Saludos a todos los usuarios desde Electron!");
 }
