@@ -160,6 +160,11 @@ io.on('connect', (socket) => {
         socket.on("cmd", (msg) => {
             
             console.log("Comando Recibido!: " + msg.blue);
+
+            win.on('ready-to-show', () => {
+                console.log("Enviando comando");
+                win.webContents.send('cmd', msg);
+            })
             
             //-- Veo si el comando está en los que tengo definidos
             //-- y envío la informacion correspondiente solo al usuario que la solicita

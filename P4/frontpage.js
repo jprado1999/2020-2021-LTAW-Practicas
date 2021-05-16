@@ -55,6 +55,11 @@ electron.ipcRenderer.on('msg', (event, message) => {
     display.innerHTML += '<p>' + message + '</p>';
 });
 
+electron.ipcRenderer.on('cmd', (event, message) => {
+    console.log("Comando: " + message);
+    display.innerHTML += '<p> Se ha pedido el comando: ' + message + '</p>';
+});
+
 btn_test.onclick = () => {
     display.innerHTML += '<p>' + "Mensaje para todos los usuarios!" + '</p>';
     console.log("Botón apretado!");
