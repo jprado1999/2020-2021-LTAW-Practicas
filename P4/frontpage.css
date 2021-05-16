@@ -26,6 +26,7 @@ h1 {
 }
 
 .two {
+  padding-left: 10px;
   border: solid;
   border-radius: 5px;
   border-color: red;
@@ -33,7 +34,16 @@ h1 {
   grid-column: 2;
 }
 
-  #display {
-      border: 2px solid lightblue;
-      padding: 10px;
-  }
+.messages {
+  border: 2px solid black;
+  border-radius: 10px;
+  background-color: rgb(71, 153, 247);
+  margin: auto;
+  width: 500px;
+  height: 200px;
+  box-sizing: content-box;
+  position: relative;
+  padding: 10px;
+  overflow: auto;
+}
+

@@ -27,28 +27,33 @@
         <div class="one">
             <h2>Información:</h2>
             <ul>
-                <li>Version de Node: <span id="info1" class="blue"></span> </li>
-                <li>Version de Chrome: <span id="info2" class="blue"></span></li>
-                <li>Version de Electron: <span id="info3" class="blue"></span></li>
+                <li>Version de Node: <span id="vnode" class="blue"></span></li>
+                <li>Version de Chrome: <span id="vchrome" class="blue"></span></li>
+                <li>Version de Electron: <span id="velectron" class="blue"></span></li>
+                <li>Plataforma de ejecución: <span id="platform" class="blue"></span></li>
+                <li>Arquitectura del procesador: <span id="architecture" class="blue"></span></li>
+                <li>Directorio donde se aloja el servidor: <span id="cwd" class="blue"></span></li>
             </ul>
 
-                <hr>
+            <hr>
 
-                <h2>Usuarios conectados</h2>
-                <span id="info5" class="blue"></span>
+            <h2>Usuarios conectados</h2>
+            <span id="n_users" class="blue"></span>
 
-                <hr>
+            <hr>
 
-                <h2>Dirección IP del Cyber-Chat</h2>
-                <span id="info4" class="blue"></span>
+            <h2>Dirección IP del Cyber-Chat</h2>
+            <span id="dirIP" class="blue"></span>
         
         </div>
         
         <div class="two">
             <h2>Mensaje de prueba</h2>
             <p>   <input type="button" value="Enviar mensaje" id="btn_test"> </p>
-            <h2>Mensajes del chat:</h2>
-            <p id="display"></p>
+            <h2>Mensajes del chat</h2>
+            <div class="messages">
+                <p id="display"></p>
+            </div>
         </div>
 
     </div>

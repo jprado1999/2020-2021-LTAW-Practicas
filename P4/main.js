@@ -11,6 +11,10 @@ console.log("Arrancando electron...");
 
 const PUERTO = 8080;
 
+//-- Variable para acceder a la ventana principal
+//-- Se pone aquí para que sea global al módulo principal
+let win = null;
+
 //-- Obtengo la direccion IP de mi maquina
 let ip_address = ip.address()
 //console.log(ip_address);
@@ -136,6 +140,17 @@ io.on('connect', (socket) => {
             //-- Reenvio el mensaje a todos los clientes conectados
             //-- Añadiendo el nick de quien lo envia
             msg = nick + ": " + msg;
+            io.send(msg);
+
+            win.on('ready-to-show', () => {
+                console.log("Enviando numero de usuarios");
+                win.webContents.send('msg', msg);
+            });
+
+        });
+
+        electron.ipcMain.handle('test', (event, msg) => {
+            console.log("Mensaje desde el renderizado: " + msg);
             io.send(msg);
         });
 
