@@ -7,7 +7,7 @@
 
     <!-- Permitir sólo scripts y ficheros de la máquina local -->
     <!-- Con esto se elimina el aviso de seguridad: Insecure Content-Security-Policy -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:" />
 
     <!-- Hoja de estilo de la interfaz -->
     <link rel="stylesheet" href="frontpage.css">
@@ -44,6 +44,9 @@
 
             <h2>Dirección IP del Cyber-Chat</h2>
             <span id="dirIP" class="blue"></span>
+            <hr>
+            <h2>Código QR para entrar al Cyber-Chat</h2>
+            <img src="" id="qr">
         
         </div>
         

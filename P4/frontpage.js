@@ -1,4 +1,5 @@
 const electron = require('electron');
+const qrcode = require('qrcode');
 
 console.log("Hola desde el proceso de la web...");
 
@@ -13,6 +14,7 @@ const n_users = document.getElementById("n_users");
 const platform = document.getElementById("platform");
 const architecture = document.getElementById("architecture");
 const cwd = document.getElementById("cwd");
+const qr = document.getElementById("qr");
 
 //-- Proceso para obtener las versiones de Chrome y Electron
 
@@ -40,9 +42,22 @@ architecture.textContent = process.arch;
 cwd.textContent = process.cwd();
 
 //-- Datos recibidos del proceso MAIN
+//-- Recepcion de la direccion a conectarnos
 electron.ipcRenderer.on('ip', (event, message) => {
     console.log("Recibido: " + message);
     dirIP.textContent = message;
+
+    //-- Generar el codigo qr de la url
+    qrcode.toDataURL(message, function (err, url) {
+        console.log("Imprimiendo codigo qr");
+        qr.src = url;
+    });
+     
+});
+
+//-- Recepcion del codigo QR
+electron.ipcRenderer.on('qr', (event, message) => {
+    qr.src = message;
 });
 
 electron.ipcRenderer.on('users', (event, message) => {
