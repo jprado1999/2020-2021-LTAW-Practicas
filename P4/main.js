@@ -21,7 +21,6 @@ let ip_address = ip.address()
 
 //-- Creo la variable con la direccion IP y el puerto
 let ip_send = "http://" + ip_address + ":" + PUERTO + "/index.html";
-console.log(ip_send);
 
 //-- Defino una variable para almacenar la cantidad de usuarios
 let users = 0;
@@ -79,26 +78,17 @@ electron.app.on('ready', ()=>{
      //-- Cargar interfaz gráfica en HTML
     win.loadFile("frontpage.html");
 
-    //-- Esperar a que la página se cargue y se muestre
-    //-- y luego enviar el mensaje al proceso de renderizado para que 
-    //-- lo saque por la interfaz gráfica
-
+    //-- Envio la IP y el puerto al proceso de renderizado
     win.on('ready-to-show', () => {
         console.log("Enviando IP y puerto");
         win.webContents.send('ip', ip_send);
     });
+});
 
-    win.on('ready-to-show', () => {
-        console.log("Enviando numero de usuarios");
-        win.webContents.send('users', users);
-    });
-
-    //- Proceso para enviar un mensaje a todos los usuarios
-    electron.ipcMain.handle('test', (event, msg) => {
-        console.log("Mensaje desde el renderizado: " + msg);
-        io.send(msg);
-    });
-
+//- Proceso para enviar un mensaje a todos los usuarios
+electron.ipcMain.handle('test', (event, msg) => {
+    console.log("Mensaje desde el renderizado: " + msg);
+    io.send(msg);
 });
 
 //------------------- GESTION SOCKETS IO
@@ -107,6 +97,10 @@ io.on('connect', (socket) => {
 
     //-- Aumento la cantidad de usuarios
     users += 1;
+
+    //-- Envio el numero de usuarios al proceso de renderizado
+    console.log("Enviando numero de usuarios");
+    win.webContents.send('users', users);
 
     //-- Mensaje de bienvenida, solo lo ve el cliente que se conecta
     socket.send("Has entrado en el Cyber-Chat");
@@ -118,6 +112,10 @@ io.on('connect', (socket) => {
     //-- Mensaje para todos los usuarios
     socket.on('nick', (nick) => {
         io.send(nick + " ha entrado en el Cyber-Chat");
+
+        //-- Envio el mensaje de conexion al proceso de renderizado
+        console.log("Enviando evento de conexion");
+        win.webContents.send('hello', nick + " se ha unido al Cyber-Chat");
 
         //-- Incluyo el nuevo nick en el array
         nicknamesArray.push(nick);
@@ -132,6 +130,14 @@ io.on('connect', (socket) => {
 
             //-- Envio un mensaje a todos los usuarios para informar
             io.send(nick + " ha abandonado el Cyber-Chat");
+
+            //-- Envio el mensaje de desconexion al proceso de renderizado
+            console.log("Enviando evento de desconexion");
+            win.webContents.send('bye', nick + " ha abandonado el Cyber-Chat");
+
+            //-- Envio el numero de usuarios al proceso de renderizado
+            console.log("Enviando numero de usuarios");
+            win.webContents.send('users', users);
 
             //-- Elimino a ese cliente del Array
             let position = nicknamesArray.indexOf(nick);
@@ -149,10 +155,9 @@ io.on('connect', (socket) => {
             msg = nick + ": " + msg;
             io.send(msg);
 
-            win.on('ready-to-show', () => {
-                console.log("Enviando mensaje del chat");
-                win.webContents.send('msg', msg);
-            });
+            //-- Envío el mensaje a la aplicacion de electron
+            console.log("Enviando mensaje del chat");
+            win.webContents.send('msg', msg);
 
         });
 
@@ -161,10 +166,9 @@ io.on('connect', (socket) => {
             
             console.log("Comando Recibido!: " + msg.blue);
 
-            win.on('ready-to-show', () => {
-                console.log("Enviando comando");
-                win.webContents.send('cmd', msg);
-            })
+            //-- Envio el comando recibido al proceso de renderizado
+            console.log("Enviando comando");
+            win.webContents.send('cmd', msg);
             
             //-- Veo si el comando está en los que tengo definidos
             //-- y envío la informacion correspondiente solo al usuario que la solicita

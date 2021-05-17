@@ -50,6 +50,16 @@ electron.ipcRenderer.on('users', (event, message) => {
     n_users.textContent = message;
 });
 
+electron.ipcRenderer.on('hello', (event, message) => {
+    console.log("Se ha conectado un usuario");
+    display.innerHTML += '<p>' + message + '</p>';
+});
+
+electron.ipcRenderer.on('bye', (event, message) => {
+    console.log("Se ha desconectado un usuario");
+    display.innerHTML += '<p>' + message + '</p>';
+});
+
 electron.ipcRenderer.on('msg', (event, message) => {
     console.log("Mensaje del chat: " + message);
     display.innerHTML += '<p>' + message + '</p>';
