@@ -60,33 +60,40 @@ electron.ipcRenderer.on('qr', (event, message) => {
     qr.src = message;
 });
 
+//-- Recepcion del numero de usuarios para escribirlo en la frontpage
 electron.ipcRenderer.on('users', (event, message) => {
     console.log("Usuarios: " + message);
     n_users.textContent = message;
 });
 
+//-- Recepcion de una nueva conexion
 electron.ipcRenderer.on('hello', (event, message) => {
     console.log("Se ha conectado un usuario");
     display.innerHTML += '<p>' + message + '</p>';
 });
 
+//-- Recepcion de una desconexion
 electron.ipcRenderer.on('bye', (event, message) => {
     console.log("Se ha desconectado un usuario");
     display.innerHTML += '<p>' + message + '</p>';
 });
 
+//-- Recepcion de un mensaje escrito por usuarios
 electron.ipcRenderer.on('msg', (event, message) => {
     console.log("Mensaje del chat: " + message);
     display.innerHTML += '<p>' + message + '</p>';
 });
 
+//-- Recepcion de un comando escrito por usuarios
 electron.ipcRenderer.on('cmd', (event, message) => {
     console.log("Comando: " + message);
     display.innerHTML += '<p> Se ha pedido el comando: ' + message + '</p>';
 });
 
+//-- Reconocer que se ha pulsado el boton de enviar un mensaje general
 btn_test.onclick = () => {
-    display.innerHTML += '<p>' + "Mensaje para todos los usuarios!" + '</p>';
+    //-- Escribo en el display de electron el mensaje para todos los usuarios
+    display.innerHTML += '<p>' + "Saludos a todos los usuarios desde Electron!" + '</p>';
     console.log("Botón apretado!");
 
     //-- Enviar mensaje al proceso principal

@@ -1,13 +1,18 @@
 h1 {
-    width: 93%;
-    padding: 20px;
-    background-color: lightgreen;
-    border-radius: 10px;
-    text-align: center;
-  }
+  padding: 20px;
+  color: yellow;
+  border-radius: 10px;
+  text-align: center;
+}
+
+body {
+  font-family: 'Quantico', sans-serif;
+  background-image: url("public/fondo.jpg");
+  color: yellow;
+}
 
 .blue {
-    color: blue;
+  color: rgb(144, 144, 247);
 }
 
 .grid {
@@ -39,8 +44,9 @@ h1 {
   border-radius: 10px;
   background-color: rgb(71, 153, 247);
   margin: auto;
+  color: black;
   width: 500px;
-  height: 200px;
+  height: 400px;
   box-sizing: content-box;
   position: relative;
   padding: 10px;
