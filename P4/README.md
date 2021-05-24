@@ -34,6 +34,8 @@ Al comenzar a chatear e iniciar sesiones con otros usuarios, veremos como se va 
 
 ## Documentación técnica de la Aplicación
 
+Nota: a la hora de empaquetar la aplicación he tenido un problema, lo explico al final del README.
+
 Ahora voy a ir explicando paso a paso cómo he programado cada una de las especificaciones de mi aplicación:
 
 **1. Creación de la interfaz básica:** partiendo del código de la práctica anterior, debemos añadir el módulo Electron (descargándolo y posteriormente importándolo con *require()*). En este momento ya tendremos las funciones y propiedades del paquete de Electron para usarlas dentro de nuestra aplicación. Es por eso que ahora crearemos una app de Electron que escuche el evento *ready* y lance una función de retrollamada cuando éste ocurra. En ese momento crearemos la interfaz gráfica de Electron mediante el comando **new electron.BrowserWindow** además de cargar el fichero HTML que contiene la frontpage de la aplicación.
@@ -58,3 +60,6 @@ Ahora desde el proceso de renderizado podremos usar **process.versions** que nos
 **4. Mostrar los mensajes que envían los usuarios:** para poder mostrar los mensajes del chat lo primero que debemos hacer es definir la *zona de nuestra interfaz gráfica* donde queremos que aparezcan y las propiedades que tendrá ese *display*. Tras ello lo único que debemos hacer es dentro del socket del servidor enviar la información de cada evento recibido al proceso de renderizado con la funcion *win.webContentes.sen()*. En el proceso de renderizado debemos escuchar esos eventos, darle el formato deseado a cada mensaje recibido y mostrarlo en el display definido anteriormente.
 
 **5. Botón de pruebas para enviar un mensaje a todos los usuarios conectados:** para realizar esta especificación debemos declarar un botón en nuestra página html y controlar lo que ocurre cuando sea pulsado. En ese momento directamente puedo imprimir un mensaje por el display, a la vez que envío la misma información mediante un evento al proceso principal mediante la función *electron.ipcRenderer.invoke()*. En el proceso de principal escucho ese evento y mediante io.send() envío el mensaje recibido a todos los clientes.
+
+**6. Mejora de empaquetar la aplicación:** para empaquetar la aplicación debemos descargar el electron-builder que realizará dicha operación. Debemos escribir la información adecuada en el fichero package.json y después lanzar el comando *npm run dist*. 
+Yo he tenido un problema al empaquetar dado que no tengo espacio disponible en el disco duro. Utilizo un sistema linux hecho en una partición del disco duro y su espacio asignado del mismo son 20 GB. Al ejecutar el comando *npm run dist* me he quedado sin espacio y github no me permite hacer commits desde el ordenador.
