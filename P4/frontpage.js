@@ -55,11 +55,6 @@ electron.ipcRenderer.on('ip', (event, message) => {
      
 });
 
-//-- Recepcion del codigo QR
-electron.ipcRenderer.on('qr', (event, message) => {
-    qr.src = message;
-});
-
 //-- Recepcion del numero de usuarios para escribirlo en la frontpage
 electron.ipcRenderer.on('users', (event, message) => {
     console.log("Usuarios: " + message);
