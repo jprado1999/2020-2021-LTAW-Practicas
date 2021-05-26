@@ -64,4 +64,4 @@ Ahora desde el proceso de renderizado podremos usar **process.versions** que nos
 **6. Mejora de empaquetar la aplicación:** para empaquetar la aplicación debemos descargar el electron-builder que realizará dicha operación. Debemos escribir la información adecuada en el fichero package.json y después lanzar el comando *npm run dist*. 
 Yo he tenido un problema al empaquetar dado que no tengo espacio disponible en el disco duro. Utilizo un sistema linux hecho en una partición del disco duro y su espacio asignado del mismo son 20 GB. Al ejecutar el comando *npm run dist* me he quedado sin espacio y github no me permite hacer commits desde el ordenador.
 
-![Imagen](Problema_LTAW.png)
+![Imagen](wiki/Problema_LTAW.png)
